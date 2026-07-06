@@ -1,0 +1,19 @@
+# Development image for the NestJS API (hot-reload via bind mount).
+# Production builds should use a multi-stage Dockerfile instead.
+FROM node:20-alpine
+
+WORKDIR /app
+
+# argon2 needs build tooling for its native bindings on alpine.
+RUN apk add --no-cache python3 make g++
+
+COPY package*.json ./
+RUN npm install
+
+COPY prisma ./prisma
+RUN npx prisma generate
+
+COPY . .
+
+EXPOSE 3001
+CMD ["npm", "run", "start:dev"]

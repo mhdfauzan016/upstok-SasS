@@ -1,0 +1,57 @@
+# Production stack — runs on the deploy server.
+#   docker compose -f docker-compose.prod.yml pull
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# Redis is NOT managed here — it runs separately; point REDIS_URL at it in .env.
+#
+# Requires a .env file next to this compose with at least:
+#   POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB
+#   JWT_ACCESS_SECRET / JWT_REFRESH_SECRET
+#   REDIS_URL           (your external Redis, e.g. redis://10.0.0.5:6379)
+#   ROOT_DOMAIN=upstock.my.id
+#   CORS_ORIGINS        (e.g. https://upstock.my.id)
+#   COOKIE_DOMAIN=.upstock.my.id (as needed)
+#   DOCKERHUB_USERNAME (defaults to mhdfauzan016), IMAGE_TAG (defaults to latest)
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    image: ${DOCKERHUB_USERNAME:-mhdfauzan016}/upstock-api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+      # REDIS_URL comes from .env (external Redis, managed outside this compose).
+    ports:
+      - "${API_PORT:-3001}:3001"
+    depends_on:
+      db: { condition: service_healthy }
+
+  web:
+    image: ${DOCKERHUB_USERNAME:-mhdfauzan016}/upstock-web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

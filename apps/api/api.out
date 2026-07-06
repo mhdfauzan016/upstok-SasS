@@ -1,0 +1,37 @@
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.53 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +46ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +13ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +6ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSharedModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTenantsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCategoriesModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +15ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/password/reset-request, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/password/reset, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTenantsController {/api/v1}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/tenants, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/tenant, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/tenant, PATCH} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/tenant/branding, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPlatformTenantsController {/api/v1/platform/tenants}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/platform/tenants, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/platform/tenants/:tenantId/status, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsController {/api/v1/products}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/:slug, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCategoriesController {/api/v1/categories}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/categories, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/categories, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/categories/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/categories/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +45ms[39m
+[32m[Nest] 20108  - [39m24/06/2026, 23.16.54 [32m    LOG[39m [38;5;3m[Bootstrap] [39m[32mUpstock API listening on http://localhost:3001/api/v1[39m

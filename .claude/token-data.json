@@ -1,0 +1,11 @@
+{
+    "overall": {
+        "input": 0,
+        "cache_write": 0,
+        "cache_read": 0,
+        "output": 0,
+        "thinking": 0,
+        "by_model": {}
+    },
+    "scopes": []
+}

@@ -1,0 +1,137 @@
+name: CI & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  DOCKERHUB_USERNAME: mhdfauzan016
+  IMAGE_API: mhdfauzan016/upstock-api
+  IMAGE_WEB: mhdfauzan016/upstock-web
+
+jobs:
+  # 1) Gate: typecheck both apps + run API unit tests before building anything.
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            apps/api/package-lock.json
+            apps/web/package-lock.json
+
+      # --- API ---
+      - name: API — install
+        working-directory: apps/api
+        run: npm ci
+      - name: API — prisma generate
+        working-directory: apps/api
+        run: npx prisma generate
+      - name: API — typecheck
+        working-directory: apps/api
+        run: npx tsc --noEmit
+      - name: API — unit tests
+        working-directory: apps/api
+        run: npx jest --ci
+
+      # --- Web ---
+      - name: Web — install
+        working-directory: apps/web
+        run: npm ci
+      - name: Web — typecheck
+        working-directory: apps/web
+        run: npx tsc --noEmit
+
+  # 2) Build both images and push to Docker Hub (skipped on PRs).
+  build-and-push:
+    needs: ci
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Detect which app changed so we only rebuild what's needed.
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            api:
+              - 'apps/api/**'
+            web:
+              - 'apps/web/**'
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        if: steps.changes.outputs.api == 'true' || steps.changes.outputs.web == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push API
+        if: steps.changes.outputs.api == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/api
+          push: true
+          tags: |
+            ${{ env.IMAGE_API }}:latest
+            ${{ env.IMAGE_API }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build & push Web
+        if: steps.changes.outputs.web == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/web
+          push: true
+          build-args: |
+            VITE_API_URL=${{ vars.VITE_API_URL }}
+            VITE_ROOT_DOMAIN=${{ vars.VITE_ROOT_DOMAIN }}
+            VITE_DEFAULT_TENANT=${{ vars.VITE_DEFAULT_TENANT }}
+          tags: |
+            ${{ env.IMAGE_WEB }}:latest
+            ${{ env.IMAGE_WEB }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # 3) Ship the prod compose file and roll the stack on the server.
+  deploy:
+    needs: build-and-push
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy compose file to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: docker-compose.prod.yml
+          target: ${{ secrets.DEPLOY_PATH }}
+
+      - name: Deploy on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ env.DOCKERHUB_USERNAME }} --password-stdin
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d
+            docker image prune -f

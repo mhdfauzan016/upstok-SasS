@@ -1,0 +1,87 @@
+# Upstock — local development stack.
+#
+#   docker compose up -d                  → Postgres + Redis only (run apps via npm)
+#   docker compose --profile api up       → also build & run the NestJS API
+#   docker compose --profile full up      → API + Next.js web (needs apps/web)
+#
+# Postgres/Redis data persist in named volumes. Stop + wipe with:
+#   docker compose down -v
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: upstock-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-upstock}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-upstock}
+      POSTGRES_DB: ${POSTGRES_DB:-upstock}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - upstock_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-upstock} -d ${POSTGRES_DB:-upstock}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: upstock-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - upstock_redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    profiles: ["api", "full"]
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+    container_name: upstock-api
+    restart: unless-stopped
+    env_file:
+      - ./apps/api/.env
+    environment:
+      # Inside the compose network the DB host is "db", not localhost.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-upstock}:${POSTGRES_PASSWORD:-upstock}@db:5432/${POSTGRES_DB:-upstock}?schema=public
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "${API_PORT:-3001}:3001"
+    volumes:
+      - ./apps/api:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sh -c "npx prisma migrate deploy && npm run start:dev"
+
+  web:
+    profiles: ["full"]
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    container_name: upstock-web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    depends_on:
+      - api
+
+volumes:
+  upstock_pgdata:
+  upstock_redisdata:

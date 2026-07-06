@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+.env
+*.log
+.DS_Store
+
+# uploaded files (local-disk product images)
+apps/api/uploads/
+
+# web build output
+.output/
+.vite/
+.nitro/
+
+# app-level envs are ignored by their own .gitignore too
+apps/*/.env
