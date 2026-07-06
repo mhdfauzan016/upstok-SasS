@@ -14,21 +14,6 @@
 #   DOCKERHUB_USERNAME (defaults to mhdfauzan016), IMAGE_TAG (defaults to latest)
 
 services:
-  db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   api:
     image: ${DOCKERHUB_USERNAME:-mhdfauzan016}/upstock-api:${IMAGE_TAG:-latest}
     restart: unless-stopped
@@ -39,8 +24,6 @@ services:
       # REDIS_URL comes from .env (external Redis, managed outside this compose).
     ports:
       - "${API_PORT:-3001}:3001"
-    depends_on:
-      db: { condition: service_healthy }
 
   web:
     image: ${DOCKERHUB_USERNAME:-mhdfauzan016}/upstock-web:${IMAGE_TAG:-latest}
