@@ -16,6 +16,13 @@ ENV VITE_API_URL=$VITE_API_URL \
     VITE_ROOT_DOMAIN=$VITE_ROOT_DOMAIN \
     VITE_DEFAULT_TENANT=$VITE_DEFAULT_TENANT
 
+# The bundled Nitro defaults to the Cloudflare target (see vite.config.ts), which
+# produces a Workers module with no Node HTTP server — running it under `node`
+# exits immediately (restart loop, no logs). Force the node-server preset so the
+# build emits a real Node server at .output/server/index.mjs.
+ENV NITRO_PRESET=node-server
+ENV SERVER_PRESET=node-server
+
 RUN npm run build
 
 # ---- runtime ----
