@@ -1,12 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { MessageCircle, MapPin, Phone, Mail } from "lucide-react";
 import { useCategories, useBranding } from "@/hooks/queries";
+import { resolveTenantSlug } from "@/lib/tenant/resolve";
 import { waChatUrl } from "@/lib/whatsapp";
 
 export function SiteFooter() {
   const { data: categories = [] } = useCategories();
   const { data: branding } = useBranding();
-  const storeName = branding?.name ?? "Toko";
+  const storeName = branding?.name ?? `Toko ${resolveTenantSlug()}`;
   const initial = storeName.charAt(0).toUpperCase() || "S";
   const year = new Date().getFullYear();
 
@@ -65,7 +66,17 @@ export function SiteFooter() {
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground md:flex-row">
           <span>© {year} {storeName}. Hak Cipta Dilindungi.</span>
-          <span>Dibuat untuk kemudahan order grosir via WhatsApp.</span>
+          <span>
+            {storeName} didukung oleh{" "}
+            <a
+              href="https://upstok.my.id"
+              target="_blank"
+              rel="noreferrer"
+              className="font-bold text-primary hover:underline"
+            >
+              upstok
+            </a>
+          </span>
         </div>
       </div>
 

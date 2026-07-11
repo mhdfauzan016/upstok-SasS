@@ -23,6 +23,6 @@ export const useOrders = create<OrdersState>()(
         })),
       addInventoryLog: (l) => set((s) => ({ inventoryLogs: [l, ...s.inventoryLogs] })),
     }),
-    { name: "sandalia-orders", version: 1 },
+    { name: "upstok-orders", version: 1 },
   ),
 );

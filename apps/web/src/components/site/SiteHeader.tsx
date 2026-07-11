@@ -3,6 +3,7 @@ import { ShoppingCart, Search, MessageCircle, Menu, X, ChevronDown } from "lucid
 import { useState } from "react";
 import { useCart } from "@/store/cart";
 import { useCategories, useBranding } from "@/hooks/queries";
+import { resolveTenantSlug } from "@/lib/tenant/resolve";
 import { waChatUrl } from "@/lib/whatsapp";
 
 export function SiteHeader() {
@@ -15,7 +16,7 @@ export function SiteHeader() {
 
   const { data: categories = [] } = useCategories();
   const { data: branding } = useBranding();
-  const storeName = branding?.name ?? "Toko";
+  const storeName = branding?.name ?? `Toko ${resolveTenantSlug()}`;
   const initial = storeName.charAt(0).toUpperCase() || "S";
 
   // Search is only relevant while browsing products — hide it elsewhere

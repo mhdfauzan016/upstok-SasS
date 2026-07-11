@@ -41,6 +41,6 @@ export const useCart = create<CartState>()(
       total: () => get().items.reduce((sum, it) => sum + it.price * it.qty, 0),
       count: () => get().items.reduce((sum, it) => sum + it.qty, 0),
     }),
-    { name: "sandalia-cart" },
+    { name: "upstok-cart" },
   ),
 );

@@ -19,7 +19,7 @@ import { Loader2, Plus, Search, Pencil, Trash2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/produk")({
-  head: () => ({ meta: [{ title: "Produk — Admin Sandalia" }] }),
+  head: () => ({ meta: [{ title: "Produk — Admin" }] }),
   component: AdminProduk,
 });
 

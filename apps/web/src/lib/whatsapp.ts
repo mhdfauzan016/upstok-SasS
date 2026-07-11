@@ -33,7 +33,7 @@ export function buildWhatsAppApiOrderUrl(order: ApiOrderDetail): string {
 
 export function buildWhatsAppOrderUrl(order: Order): string {
   const lines: string[] = [];
-  lines.push("Halo Admin Sandalia Grosir, saya ingin memesan:");
+  lines.push("Halo Admin, saya ingin memesan:");
   lines.push("");
   order.items.forEach((it, i) => {
     lines.push(

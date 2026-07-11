@@ -9,9 +9,9 @@ import heroImg from "@/assets/hero-sandals.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sandalia Grosir — Pusat Sandal Wholesale Indonesia" },
+      { title: "upstok — Platform Toko Online Grosir" },
       { name: "description", content: "Distributor sandal grosir terpercaya. Harga pabrik, stok ribuan kodi, kirim seluruh Indonesia via WhatsApp." },
-      { property: "og:title", content: "Sandalia Grosir — Pusat Sandal Wholesale Indonesia" },
+      { property: "og:title", content: "upstok — Platform Toko Online Grosir" },
       { property: "og:description", content: "Distributor sandal grosir terpercaya. Harga pabrik, stok ribuan kodi, kirim seluruh Indonesia." },
     ],
   }),

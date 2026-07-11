@@ -13,7 +13,7 @@ import { Loader2, Plus, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/kategori")({
-  head: () => ({ meta: [{ title: "Kategori — Admin Sandalia" }] }),
+  head: () => ({ meta: [{ title: "Kategori — Admin" }] }),
   component: AdminKategori,
 });
 

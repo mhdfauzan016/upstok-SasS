@@ -12,7 +12,7 @@ import { Package, Warehouse, ShoppingBag, TrendingUp, AlertTriangle } from "luci
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from "recharts";
 
 export const Route = createFileRoute("/admin/")({
-  head: () => ({ meta: [{ title: "Dashboard — Admin Sandalia" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — Admin" }] }),
   component: AdminDashboard,
 });
 

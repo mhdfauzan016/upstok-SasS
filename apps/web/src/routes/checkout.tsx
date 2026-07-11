@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/checkout")({
-  head: () => ({ meta: [{ title: "Checkout — Sandalia Grosir" }] }),
+  head: () => ({ meta: [{ title: "Checkout — upstok" }] }),
   component: CheckoutPage,
 });
 

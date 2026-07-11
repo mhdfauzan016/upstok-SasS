@@ -6,7 +6,7 @@ import { rupiah } from "@/lib/format";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 
 export const Route = createFileRoute("/keranjang")({
-  head: () => ({ meta: [{ title: "Keranjang — Sandalia Grosir" }] }),
+  head: () => ({ meta: [{ title: "Keranjang — upstok" }] }),
   component: CartPage,
 });
 

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/produk/")({
   }),
   head: () => ({
     meta: [
-      { title: "Katalog Produk — Sandalia Grosir" },
+      { title: "Katalog Produk — upstok" },
       { name: "description", content: "Katalog lengkap sandal grosir pria, wanita, dan anak. Harga grosir mulai Rp 6.500 per pasang." },
     ],
   }),

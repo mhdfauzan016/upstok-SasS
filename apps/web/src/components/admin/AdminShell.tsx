@@ -2,6 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/store/auth";
 import { useBranding } from "@/hooks/queries";
+import { resolveTenantSlug } from "@/lib/tenant/resolve";
 import { LayoutDashboard, Package, FolderTree, ShoppingBag, Warehouse, FileBarChart, Settings, LogOut, Menu } from "lucide-react";
 
 /** First letter of a label, for the logo/avatar fallback. */
@@ -49,7 +50,12 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
 
-  const storeName = branding?.name ?? "Toko";
+  const storeName = branding?.name ?? `Toko ${resolveTenantSlug()}`;
+
+  // Reflect the active tenant in the browser tab once branding resolves.
+  useEffect(() => {
+    document.title = `${title} — ${storeName}`;
+  }, [title, storeName]);
 
   return (
     <div className="flex min-h-screen bg-secondary/30">

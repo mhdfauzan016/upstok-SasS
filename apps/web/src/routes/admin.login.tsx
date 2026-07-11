@@ -4,15 +4,15 @@ import { useAuth } from "@/store/auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/login")({
-  head: () => ({ meta: [{ title: "Login Admin — Sandalia Grosir" }] }),
+  head: () => ({ meta: [{ title: "Login Admin — upstok" }] }),
   component: AdminLogin,
 });
 
 function AdminLogin() {
   const login = useAuth((s) => s.login);
   const navigate = useNavigate();
-  const [email, setEmail] = useState("admin@sandalia.id");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +28,8 @@ function AdminLogin() {
     <div className="grid min-h-screen place-items-center bg-gradient-to-br from-primary/10 via-background to-brand/10 p-4">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-xl">
         <Link to="/" className="mb-6 flex items-center justify-center gap-2">
-          <div className="grid size-10 place-items-center rounded-md bg-primary text-primary-foreground font-extrabold">S</div>
-          <span className="text-xl font-extrabold text-primary">SANDALIA<span className="text-brand">.</span></span>
+          <div className="grid size-10 place-items-center rounded-md bg-primary text-primary-foreground font-extrabold">U</div>
+          <span className="text-xl font-extrabold text-primary">upstok<span className="text-brand">.</span></span>
         </Link>
         <h1 className="text-center text-xl font-bold">Login Admin Panel</h1>
         <p className="mt-1 text-center text-sm text-muted-foreground">Masuk untuk mengelola toko</p>
@@ -49,10 +49,6 @@ function AdminLogin() {
             Masuk
           </button>
         </form>
-
-        <div className="mt-4 rounded-md bg-secondary/60 p-3 text-center text-[11px] text-muted-foreground">
-          Demo: <code className="font-mono">admin@sandalia.id</code> / <code className="font-mono">admin123</code>
-        </div>
       </div>
     </div>
   );
