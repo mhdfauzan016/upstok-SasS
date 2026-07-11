@@ -30,6 +30,8 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const [open, setOpen] = useState(false);
 
+  const storeName = branding?.name ?? `Toko ${resolveTenantSlug()}`;
+
   // Restore the session from the httpOnly refresh cookie on first load.
   useEffect(() => {
     if (!ready) void bootstrap();
@@ -40,6 +42,13 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
     if (ready && !isAdmin) navigate({ to: "/admin/login" });
   }, [ready, isAdmin, navigate]);
 
+  // Reflect the active tenant in the browser tab once branding resolves.
+  // NOTE: this hook must run on every render (before any early return) to keep
+  // the hook order stable — otherwise reload crashes when `ready` flips.
+  useEffect(() => {
+    document.title = `${title} — ${storeName}`;
+  }, [title, storeName]);
+
   if (!ready) {
     return <div className="grid min-h-screen place-items-center text-sm text-muted-foreground">Memuat...</div>;
   }
@@ -49,13 +58,6 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
-
-  const storeName = branding?.name ?? `Toko ${resolveTenantSlug()}`;
-
-  // Reflect the active tenant in the browser tab once branding resolves.
-  useEffect(() => {
-    document.title = `${title} — ${storeName}`;
-  }, [title, storeName]);
 
   return (
     <div className="flex min-h-screen bg-secondary/30">
