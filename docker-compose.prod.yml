@@ -22,6 +22,8 @@ services:
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?schema=public
       # REDIS_URL comes from .env (external Redis, managed outside this compose).
+    networks:
+      - shared-network
     ports:
       - "${API_PORT:-3001}:3001"
 
@@ -33,8 +35,14 @@ services:
       PORT: 3000
     ports:
       - "${WEB_PORT:-3000}:3000"
+    networks:
+      - shared-network
     depends_on:
       - api
+
+networks:
+  shared-network:
+    external: true
 
 volumes:
   pgdata:
