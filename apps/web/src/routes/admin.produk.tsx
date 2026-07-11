@@ -18,6 +18,9 @@ import { ApiError } from "@/lib/api/errors";
 import { Loader2, Plus, Search, Pencil, Trash2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
+/** Max product image size (5 MB) — must match the API's MAX_IMAGE_BYTES. */
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
 export const Route = createFileRoute("/admin/produk")({
   head: () => ({ meta: [{ title: "Produk — Admin" }] }),
   component: AdminProduk,
@@ -295,15 +298,34 @@ function ProductDialog({ product, categories, saving, onClose, onSave }: { produ
 
   const onPickImages = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
+
+    // Reject oversized files up front. A 413 from the reverse proxy is returned
+    // without CORS headers, so the browser blocks the response and the fetch
+    // surfaces only a generic network error — we can't detect the size cap after
+    // the fact, so validate here.
+    const list = Array.from(files);
+    const tooBig = list.find((f) => f.size > MAX_IMAGE_BYTES);
+    if (tooBig) {
+      toast.error(`Gambar "${tooBig.name}" melebihi batas 5 MB. Perkecil ukurannya lalu coba lagi.`);
+      if (fileInput.current) fileInput.current.value = "";
+      return;
+    }
+
     setUploading(true);
     try {
       const urls = await Promise.all(
-        Array.from(files).map((f) => productsService.uploadImage(f)),
+        list.map((f) => productsService.uploadImage(f)),
       );
       setForm((f) => ({ ...f, images: [...f.images, ...urls] }));
       toast.success(urls.length > 1 ? `${urls.length} gambar diunggah` : "Gambar diunggah");
-    } catch {
-      toast.error("Gagal mengunggah gambar. Pastikan Anda sudah login.");
+    } catch (err) {
+      if (err instanceof ApiError && err.isUnauthorized) {
+        toast.error("Sesi Anda berakhir. Silakan login kembali.");
+      } else if (err instanceof ApiError) {
+        toast.error(err.message || "Gagal mengunggah gambar.");
+      } else {
+        toast.error("Gagal mengunggah gambar. Periksa koneksi Anda atau perkecil ukuran gambar.");
+      }
     } finally {
       setUploading(false);
       if (fileInput.current) fileInput.current.value = "";
