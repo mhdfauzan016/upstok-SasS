@@ -42,7 +42,6 @@ export function SiteHeader() {
             <a href={waChatUrl()} className="inline-flex items-center gap-1.5 hover:text-brand">
               <MessageCircle className="size-3.5" /> WhatsApp 0822-7644-1753
             </a>
-            <Link to="/admin/login" className="hover:text-brand">Admin Login</Link>
           </div>
         </div>
       </div>
@@ -199,7 +198,6 @@ export function SiteHeader() {
               </Link>
             ))}
             <a href={waChatUrl()} target="_blank" rel="noreferrer" onClick={() => setOpen(false)} className="block rounded px-3 py-2 text-sm text-muted-foreground hover:bg-secondary">Kontak</a>
-            <Link to="/admin/login" onClick={() => setOpen(false)} className="block rounded px-3 py-2 text-sm text-muted-foreground hover:bg-secondary">Admin Login</Link>
           </div>
         </div>
       )}
