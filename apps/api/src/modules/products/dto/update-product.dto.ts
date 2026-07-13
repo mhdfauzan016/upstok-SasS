@@ -55,6 +55,10 @@ export class UpdateProductDto {
   categoryId?: string | null;
 
   @IsOptional()
+  @IsUUID()
+  brandId?: string | null;
+
+  @IsOptional()
   @IsArray()
   // require_tld:false so locally-hosted uploads (e.g. http://localhost:3001/...)
   // are accepted; production hosts (api.lvh.me / *.upstock.my.id) pass either way.

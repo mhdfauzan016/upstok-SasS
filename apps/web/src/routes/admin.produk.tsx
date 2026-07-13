@@ -6,6 +6,7 @@ import type { Product } from "@/mock/types";
 import { productsService } from "@/services/products.service";
 import { inventoryService } from "@/services/inventory.service";
 import type { CategoryOption } from "@/services/categories.service";
+import type { BrandOption } from "@/services/brands.service";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useProducts,
@@ -13,6 +14,7 @@ import {
   useUpdateProduct,
   useDeleteProduct,
   useCategories,
+  useBrands,
 } from "@/hooks/queries";
 import { ApiError } from "@/lib/api/errors";
 import { Loader2, Plus, Search, Pencil, Trash2, Upload, X } from "lucide-react";
@@ -32,15 +34,22 @@ type FieldErrors = { name?: string; sku?: string; price?: string; images?: strin
 function AdminProduk() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("");
+  const [brand, setBrand] = useState("");
   const [editing, setEditing] = useState<Product | null>(null);
   const [creating, setCreating] = useState(false);
 
-  // Category filter is applied server-side (?categoryId) so it works even
-  // though list rows don't carry every field; search stays client-side.
-  const { data, isLoading } = useProducts({ categoryId: cat || undefined });
+  // Category/brand filters are applied server-side (?categoryId/?brandId) so
+  // they work even though list rows don't carry every field; search stays
+  // client-side.
+  const { data, isLoading } = useProducts({
+    categoryId: cat || undefined,
+    brandId: brand || undefined,
+  });
   const products = data?.items ?? [];
   const { data: catData } = useCategories();
   const categories = catData ?? [];
+  const { data: brandData } = useBrands();
+  const brands = brandData ?? [];
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
@@ -118,6 +127,7 @@ function AdminProduk() {
       colors: p.colors.map((c) => c.trim()).filter(Boolean),
       sizes: p.sizes.map((s) => s.trim()).filter(Boolean),
       categoryId: p.categoryId || undefined,
+      brandId: p.brandId || undefined,
     };
     try {
       // 1. Save the product record (name, sku, price, images, colors, ...).
@@ -169,6 +179,11 @@ function AdminProduk() {
             <option value="">Semua Kategori</option>
             {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
+          <select value={brand} onChange={(e) => setBrand(e.target.value)}
+            className="h-10 rounded-md border border-border bg-background px-3 text-sm outline-none focus:border-primary">
+            <option value="">Semua Merk</option>
+            {brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+          </select>
           <button
             onClick={() => setCreating(true)}
             className="inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90"
@@ -184,6 +199,7 @@ function AdminProduk() {
                 <th className="px-4 py-3 font-bold">Produk</th>
                 <th className="px-4 py-3 font-bold">SKU</th>
                 <th className="px-4 py-3 font-bold">Kategori</th>
+                <th className="px-4 py-3 font-bold">Merk</th>
                 <th className="px-4 py-3 font-bold text-right">Harga</th>
                 <th className="px-4 py-3 font-bold text-right">Stok</th>
                 <th className="px-4 py-3 font-bold text-right">Aksi</th>
@@ -203,6 +219,7 @@ function AdminProduk() {
                   </td>
                   <td className="px-4 py-3 font-mono text-xs">{p.sku}</td>
                   <td className="px-4 py-3 text-muted-foreground">{categories.find((c) => c.id === p.categoryId)?.name}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{brands.find((b) => b.id === p.brandId)?.name}</td>
                   <td className="px-4 py-3 text-right font-bold text-brand">{rupiah(p.price)}</td>
                   <td className="px-4 py-3 text-right">
                     <span className={`rounded px-2 py-0.5 text-xs font-bold ${p.stock < 200 ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}`}>
@@ -222,10 +239,10 @@ function AdminProduk() {
                 </tr>
               ))}
               {isLoading && (
-                <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Memuat produk…</td></tr>
+                <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">Memuat produk…</td></tr>
               )}
               {!isLoading && filtered.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Tidak ada produk</td></tr>
+                <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">Tidak ada produk</td></tr>
               )}
             </tbody>
           </table>
@@ -239,6 +256,7 @@ function AdminProduk() {
         <ProductDialog
           product={editing}
           categories={categories}
+          brands={brands}
           saving={createProduct.isPending || updateProduct.isPending}
           onClose={() => { setEditing(null); setCreating(false); }}
           onSave={onSave}
@@ -248,9 +266,9 @@ function AdminProduk() {
   );
 }
 
-function ProductDialog({ product, categories, saving, onClose, onSave }: { product: Product | null; categories: CategoryOption[]; saving: boolean; onClose: () => void; onSave: (p: Product) => Promise<FieldErrors | null> }) {
+function ProductDialog({ product, categories, brands, saving, onClose, onSave }: { product: Product | null; categories: CategoryOption[]; brands: BrandOption[]; saving: boolean; onClose: () => void; onSave: (p: Product) => Promise<FieldErrors | null> }) {
   const empty: Product = {
-    id: `p${Date.now()}`, slug: "", name: "", sku: "", categoryId: "",
+    id: `p${Date.now()}`, slug: "", name: "", sku: "", categoryId: "", brandId: "",
     price: 0, stock: 0, description: "",
     sizes: [], colors: [],
     images: [],
@@ -361,6 +379,7 @@ function ProductDialog({ product, categories, saving, onClose, onSave }: { produ
             <Field label="Nama Produk *" error={errors.name}><input value={form.name} onChange={(e) => { setForm({ ...form, name: e.target.value }); clearError("name"); }} className={`input ${errors.name ? "input-error" : ""}`} /></Field>
             <Field label="SKU *" error={errors.sku}><input value={form.sku} onChange={(e) => { setForm({ ...form, sku: e.target.value }); clearError("sku"); }} className={`input ${errors.sku ? "input-error" : ""}`} /></Field>
             <Field label="Kategori"><select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })} className="input"><option value="">Tanpa Kategori</option>{categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
+            <Field label="Merk"><select value={form.brandId} onChange={(e) => setForm({ ...form, brandId: e.target.value })} className="input"><option value="">Tanpa Merk</option>{brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}</select></Field>
             <Field label="Harga (Rp) *" error={errors.price}><input type="text" inputMode="numeric" value={priceStr} onChange={(e) => { onNumericChange(setPriceStr, "price")(e); clearError("price"); }} placeholder="0" className={`input ${errors.price ? "input-error" : ""}`} /></Field>
             <Field label="Stok"><input type="text" inputMode="numeric" value={stockStr} onChange={onNumericChange(setStockStr, "stock")} placeholder="0" className="input" /></Field>
             <Field label="Ukuran (pisah koma)"><input value={form.sizes.join(",")} onChange={(e) => setForm({ ...form, sizes: e.target.value.split(",").map((s) => s.trim()) })} className="input" /></Field>

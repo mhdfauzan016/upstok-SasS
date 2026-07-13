@@ -4,7 +4,8 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { productsService } from "@/services/products.service";
 import { ApiError } from "@/lib/api/errors";
-import { useCategories } from "@/hooks/queries";
+import { useCategories, useBranding } from "@/hooks/queries";
+import { waChatUrl } from "@/lib/whatsapp";
 import type { Product } from "@/mock/types";
 import { useCart } from "@/store/cart";
 import { rupiah } from "@/lib/format";
@@ -43,6 +44,7 @@ export const Route = createFileRoute("/produk/$slug")({
 function ProductDetail() {
   const { product } = Route.useLoaderData() as { product: Product };
   const { data: categories = [] } = useCategories();
+  const { data: branding } = useBranding();
   const cat = categories.find((c) => c.id === product.categoryId);
   const navigate = useNavigate();
   const add = useCart((s) => s.add);
@@ -178,7 +180,7 @@ function ProductDetail() {
                 Beli Sekarang
               </button>
               <a
-                href={`https://wa.me/6282276441753?text=${encodeURIComponent(`Halo Admin, saya tertarik dengan ${product.name} (${product.sku}). Bisa info stok dan harga grosirnya?`)}`}
+                href={waChatUrl(branding?.phone, `Halo Admin, saya tertarik dengan ${product.name} (${product.sku}). Bisa info stok dan harga grosirnya?`)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex h-12 items-center gap-2 rounded-md border border-border px-6 text-sm font-bold hover:bg-secondary"

@@ -16,6 +16,7 @@ export interface ProductListItem {
   colors: string[];
   sizes: string[];
   category: { id: string; name: string } | null;
+  brand: { id: string; name: string } | null;
   status: string;
   stock: number;
   available: boolean;

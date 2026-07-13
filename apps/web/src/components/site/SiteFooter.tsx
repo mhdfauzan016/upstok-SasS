@@ -80,16 +80,18 @@ export function SiteFooter() {
         </div>
       </div>
 
-      {/* Floating WhatsApp */}
-      <a
-        href={waChatUrl()}
-        target="_blank"
-        rel="noreferrer"
-        className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-black/20 transition-transform hover:scale-105"
-      >
-        <MessageCircle className="size-4" />
-        Chat WhatsApp
-      </a>
+      {/* Floating WhatsApp — only when the tenant has set a phone number. */}
+      {phone && (
+        <a
+          href={waChatUrl(phone)}
+          target="_blank"
+          rel="noreferrer"
+          className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-black/20 transition-transform hover:scale-105"
+        >
+          <MessageCircle className="size-4" />
+          Chat WhatsApp
+        </a>
+      )}
     </footer>
   );
 }

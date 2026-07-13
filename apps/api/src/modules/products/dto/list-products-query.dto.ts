@@ -16,6 +16,10 @@ export class ListProductsQueryDto {
   categoryId?: string;
 
   @IsOptional()
+  @IsUUID()
+  brandId?: string;
+
+  @IsOptional()
   @IsString()
   @Length(1, 100)
   @Transform(({ value }) => (value as string)?.trim())

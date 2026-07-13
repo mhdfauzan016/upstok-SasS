@@ -10,6 +10,7 @@ export type Product = {
   name: string;
   sku: string;
   categoryId: string;
+  brandId?: string;
   price: number;
   stock: number;
   description: string;

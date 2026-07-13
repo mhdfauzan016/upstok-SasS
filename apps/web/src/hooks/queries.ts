@@ -21,6 +21,10 @@ import {
   categoriesService,
   type SaveCategoryInput,
 } from "@/services/categories.service";
+import {
+  brandsService,
+  type SaveBrandInput,
+} from "@/services/brands.service";
 import { reportsService, type ReportRange } from "@/services/reports.service";
 import type {
   ApiOrderStatus,
@@ -37,6 +41,7 @@ export const queryKeys = {
   product: (slug: string) =>
     ["product", resolveTenantSlug(), slug] as const,
   categories: () => ["categories", resolveTenantSlug()] as const,
+  brands: () => ["brands", resolveTenantSlug()] as const,
   branding: () => ["tenant-branding", resolveTenantSlug()] as const,
   tenantProfile: () => ["tenant-profile", resolveTenantSlug()] as const,
   inventory: (params: ListInventoryParams) =>
@@ -137,6 +142,48 @@ export function useDeleteCategory() {
   const invalidate = useInvalidateCategories();
   return useMutation({
     mutationFn: (id: string) => categoriesService.remove(id),
+    onSuccess: invalidate,
+  });
+}
+
+export function useBrands() {
+  return useQuery({
+    queryKey: queryKeys.brands(),
+    queryFn: () => brandsService.list(),
+    staleTime: 5 * 60_000,
+  });
+}
+
+/** Invalidates brand + product caches (product rows carry brand info). */
+function useInvalidateBrands() {
+  const qc = useQueryClient();
+  return () => {
+    qc.invalidateQueries({ queryKey: ["brands", resolveTenantSlug()] });
+    qc.invalidateQueries({ queryKey: ["products", resolveTenantSlug()] });
+  };
+}
+
+export function useCreateBrand() {
+  const invalidate = useInvalidateBrands();
+  return useMutation({
+    mutationFn: (input: SaveBrandInput) => brandsService.create(input),
+    onSuccess: invalidate,
+  });
+}
+
+export function useUpdateBrand() {
+  const invalidate = useInvalidateBrands();
+  return useMutation({
+    mutationFn: (vars: { id: string; input: SaveBrandInput }) =>
+      brandsService.update(vars.id, vars.input),
+    onSuccess: invalidate,
+  });
+}
+
+export function useDeleteBrand() {
+  const invalidate = useInvalidateBrands();
+  return useMutation({
+    mutationFn: (id: string) => brandsService.remove(id),
     onSuccess: invalidate,
   });
 }

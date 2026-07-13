@@ -7,6 +7,8 @@ export const Permission = {
   PRODUCT_DELETE: 'product:delete',
   CATEGORY_WRITE: 'category:write',
   CATEGORY_DELETE: 'category:delete',
+  BRAND_WRITE: 'brand:write',
+  BRAND_DELETE: 'brand:delete',
   // Inventory
   INVENTORY_READ: 'inventory:read',
   INVENTORY_WRITE: 'inventory:write',

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { useCart } from "@/store/cart";
-import { useCreateOrder } from "@/hooks/queries";
+import { useCreateOrder, useBranding } from "@/hooks/queries";
 import { rupiah } from "@/lib/format";
 import { buildWhatsAppApiOrderUrl } from "@/lib/whatsapp";
 import { ApiError } from "@/lib/api/errors";
@@ -20,6 +20,7 @@ function CheckoutPage() {
   const total = useCart((s) => s.total());
   const clear = useCart((s) => s.clear);
   const createOrder = useCreateOrder();
+  const { data: branding } = useBranding();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ name: "", phone: "", address: "", notes: "" });
@@ -47,7 +48,7 @@ function CheckoutPage() {
       },
       {
         onSuccess: (order) => {
-          const url = buildWhatsAppApiOrderUrl(order);
+          const url = buildWhatsAppApiOrderUrl(order, branding?.phone);
           clear();
           toast.success("Order tersimpan! Membuka WhatsApp...");
           setTimeout(() => {

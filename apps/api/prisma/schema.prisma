@@ -251,11 +251,30 @@ model Category {
   @@map("categories")
 }
 
+model Brand {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  name      String
+  slug      String
+  position  Int       @default(0)
+  products  Product[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("brands")
+}
+
 model Product {
   id          String         @id @default(uuid()) @db.Uuid
   tenantId    String         @map("tenant_id") @db.Uuid
   categoryId  String?        @map("category_id") @db.Uuid
   category    Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  brandId     String?        @map("brand_id") @db.Uuid
+  brand       Brand?         @relation(fields: [brandId], references: [id], onDelete: SetNull)
   name        String
   slug        String
   sku         String
@@ -275,6 +294,7 @@ model Product {
   @@unique([tenantId, slug])
   @@unique([tenantId, sku])
   @@index([tenantId, status, categoryId])
+  @@index([tenantId, status, brandId])
   @@index([tenantId, createdAt])
   @@map("products")
 }

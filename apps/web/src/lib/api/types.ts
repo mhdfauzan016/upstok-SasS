@@ -21,9 +21,18 @@ export interface ApiProductListItem {
   colors: string[];
   sizes: string[];
   category: { id: string; name: string } | null;
+  brand: { id: string; name: string } | null;
   status: string;
   stock: number;
   available: boolean;
+}
+
+export interface ApiBrand {
+  id: string;
+  name: string;
+  slug: string;
+  position: number;
+  productCount: number;
 }
 
 export interface ApiProductDetail extends ApiProductListItem {

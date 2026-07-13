@@ -4,6 +4,7 @@ import { PrismaService } from '../../core/prisma/prisma.service';
 
 const PRODUCT_INCLUDE = {
   category: { select: { id: true, name: true } },
+  brand: { select: { id: true, name: true } },
   inventory: { select: { quantityOnHand: true } },
 } satisfies Prisma.ProductInclude;
 
@@ -20,11 +21,13 @@ export interface CreateProductParams {
   sizes: string[];
   status: ProductStatus;
   categoryId?: string;
+  brandId?: string;
 }
 
 export interface ListPublicParams {
   tenantId: string;
   categoryId?: string;
+  brandId?: string;
   search?: string;
   skip: number;
   take: number;
@@ -53,6 +56,13 @@ export class ProductsRepository {
   findCategoryInTenant(tenantId: string, categoryId: string) {
     return this.prisma.category.findFirst({
       where: { id: categoryId, tenantId, deletedAt: null },
+      select: { id: true },
+    });
+  }
+
+  findBrandInTenant(tenantId: string, brandId: string) {
+    return this.prisma.brand.findFirst({
+      where: { id: brandId, tenantId, deletedAt: null },
       select: { id: true },
     });
   }
@@ -107,6 +117,7 @@ export class ProductsRepository {
         sizes: params.sizes,
         status: params.status,
         categoryId: params.categoryId,
+        brandId: params.brandId,
         inventory: { create: { tenantId: params.tenantId } },
       },
       include: PRODUCT_INCLUDE,
@@ -149,6 +160,7 @@ export class ProductsRepository {
       status: 'active',
       deletedAt: null,
       ...(params.categoryId ? { categoryId: params.categoryId } : {}),
+      ...(params.brandId ? { brandId: params.brandId } : {}),
       ...(params.search
         ? { name: { contains: params.search, mode: 'insensitive' } }
         : {}),

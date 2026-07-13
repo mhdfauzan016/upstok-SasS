@@ -39,9 +39,11 @@ export function SiteHeader() {
         <div className="mx-auto flex h-9 max-w-7xl items-center justify-between px-4 text-xs">
           <span>Senin–Sabtu, 08:00–17:00 WIB</span>
           <div className="flex items-center gap-4">
-            <a href={waChatUrl()} className="inline-flex items-center gap-1.5 hover:text-brand">
-              <MessageCircle className="size-3.5" /> WhatsApp 0822-7644-1753
-            </a>
+            {branding?.phone && (
+              <a href={waChatUrl(branding.phone)} className="inline-flex items-center gap-1.5 hover:text-brand">
+                <MessageCircle className="size-3.5" /> WhatsApp {branding.phone}
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -153,7 +155,7 @@ export function SiteHeader() {
           )}
 
           <a
-            href={waChatUrl()}
+            href={waChatUrl(branding?.phone)}
             target="_blank"
             rel="noreferrer"
             className="whitespace-nowrap rounded px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-background hover:text-foreground"
@@ -197,7 +199,7 @@ export function SiteHeader() {
                 {c.name}
               </Link>
             ))}
-            <a href={waChatUrl()} target="_blank" rel="noreferrer" onClick={() => setOpen(false)} className="block rounded px-3 py-2 text-sm text-muted-foreground hover:bg-secondary">Kontak</a>
+            <a href={waChatUrl(branding?.phone)} target="_blank" rel="noreferrer" onClick={() => setOpen(false)} className="block rounded px-3 py-2 text-sm text-muted-foreground hover:bg-secondary">Kontak</a>
           </div>
         </div>
       )}

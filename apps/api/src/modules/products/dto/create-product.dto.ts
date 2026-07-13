@@ -61,6 +61,10 @@ export class CreateProductDto {
   categoryId?: string;
 
   @IsOptional()
+  @IsUUID()
+  brandId?: string;
+
+  @IsOptional()
   @IsArray()
   // require_tld:false so locally-hosted uploads (e.g. http://localhost:3001/...)
   // are accepted; production hosts (api.lvh.me / *.upstock.my.id) pass either way.

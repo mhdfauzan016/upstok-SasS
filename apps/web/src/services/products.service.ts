@@ -25,6 +25,7 @@ function mapProduct(
     name: src.name,
     sku: src.sku,
     categoryId: src.category?.id ?? "",
+    brandId: src.brand?.id ?? "",
     price: Math.round(src.price.amount / 100),
     stock: src.stock,
     description: detail.description ?? "",
@@ -38,6 +39,7 @@ function mapProduct(
 
 export interface ListProductsParams {
   categoryId?: string;
+  brandId?: string;
   search?: string;
   page?: number;
   limit?: number;
@@ -61,6 +63,7 @@ export interface SaveProductInput {
   colors: string[];
   sizes: string[];
   categoryId?: string;
+  brandId?: string;
 }
 
 export const productsService = {
@@ -69,6 +72,7 @@ export const productsService = {
       auth: false,
       query: {
         categoryId: params.categoryId,
+        brandId: params.brandId,
         search: params.search,
         page: params.page ?? 1,
         limit: params.limit ?? 100,
@@ -118,6 +122,7 @@ export const productsService = {
       colors: input.colors,
       sizes: input.sizes,
       categoryId: input.categoryId || undefined,
+      brandId: input.brandId || undefined,
       status: "active",
     });
     return mapProduct(res);
@@ -133,6 +138,7 @@ export const productsService = {
       colors: input.colors,
       sizes: input.sizes,
       categoryId: input.categoryId || undefined,
+      brandId: input.brandId || undefined,
     });
     return mapProduct(res);
   },

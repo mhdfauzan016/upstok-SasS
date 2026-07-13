@@ -3,14 +3,15 @@ import { useState, useMemo, useEffect } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { ProductCard } from "@/components/site/ProductCard";
-import { useProducts, useCategories } from "@/hooks/queries";
+import { useProducts, useCategories, useBrands } from "@/hooks/queries";
 import { Search } from "lucide-react";
 
-type Search = { kategori?: string; q?: string };
+type Search = { kategori?: string; merk?: string; q?: string };
 
 export const Route = createFileRoute("/produk/")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     kategori: typeof s.kategori === "string" ? s.kategori : undefined,
+    merk: typeof s.merk === "string" ? s.merk : undefined,
     q: typeof s.q === "string" && s.q ? s.q : undefined,
   }),
   head: () => ({
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/produk/")({
 });
 
 function KatalogPage() {
-  const { kategori, q: urlQ } = Route.useSearch();
+  const { kategori, merk, q: urlQ } = Route.useSearch();
   const [q, setQ] = useState(urlQ ?? "");
   const [page, setPage] = useState(1);
   const perPage = 12;
@@ -38,11 +39,15 @@ function KatalogPage() {
   // API can filter server-side.
   const { data: categories = [] } = useCategories();
   const activeCat = categories.find((c) => c.slug === kategori);
+  const { data: brands = [] } = useBrands();
+  const activeBrand = brands.find((b) => b.slug === merk);
 
-  // Live catalog from the API (active products, filtered by category server-side).
+  // Live catalog from the API (active products, filtered by category + brand
+  // server-side).
   const { data } = useProducts({
     search: q || undefined,
     categoryId: activeCat?.id,
+    brandId: activeBrand?.id,
   });
   const products = data?.items ?? [];
 
@@ -85,7 +90,7 @@ function KatalogPage() {
                 <li>
                   <Link
                     to="/produk"
-                    search={{ kategori: undefined as string | undefined }}
+                    search={{ kategori: undefined as string | undefined, merk }}
                     className={`block rounded px-2 py-1.5 text-sm hover:bg-secondary ${!kategori ? "bg-secondary font-bold text-primary" : ""}`}
                   >
                     Semua Produk
@@ -95,7 +100,7 @@ function KatalogPage() {
                   <li key={c.id}>
                     <Link
                       to="/produk"
-                      search={{ kategori: c.slug }}
+                      search={{ kategori: c.slug, merk }}
                       className={`block rounded px-2 py-1.5 text-sm hover:bg-secondary ${kategori === c.slug ? "bg-secondary font-bold text-primary" : ""}`}
                     >
                       {c.name}
@@ -104,6 +109,33 @@ function KatalogPage() {
                 ))}
               </ul>
             </div>
+            {brands.length > 0 && (
+              <div className="rounded-lg border border-border bg-card p-4">
+                <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-muted-foreground">Merk</h3>
+                <ul className="space-y-1">
+                  <li>
+                    <Link
+                      to="/produk"
+                      search={{ kategori, merk: undefined as string | undefined }}
+                      className={`block rounded px-2 py-1.5 text-sm hover:bg-secondary ${!merk ? "bg-secondary font-bold text-primary" : ""}`}
+                    >
+                      Semua Merk
+                    </Link>
+                  </li>
+                  {brands.map((b) => (
+                    <li key={b.id}>
+                      <Link
+                        to="/produk"
+                        search={{ kategori, merk: b.slug }}
+                        className={`block rounded px-2 py-1.5 text-sm hover:bg-secondary ${merk === b.slug ? "bg-secondary font-bold text-primary" : ""}`}
+                      >
+                        {b.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </aside>
 
           <div>

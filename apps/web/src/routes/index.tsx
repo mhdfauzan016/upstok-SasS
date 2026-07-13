@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { ProductCard } from "@/components/site/ProductCard";
 import { useProducts, useCategories, useBranding } from "@/hooks/queries";
+import { waChatUrl } from "@/lib/whatsapp";
 import { ArrowRight, Truck, Tag, Package, ShieldCheck } from "lucide-react";
 import heroImg from "@/assets/hero-sandals.jpg";
 
@@ -70,7 +71,7 @@ function Index() {
                 Lihat Produk <ArrowRight className="size-4" />
               </Link>
               <a
-                href="https://wa.me/6282276441753"
+                href={waChatUrl(branding?.phone)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex h-12 items-center gap-2 rounded-md border border-border bg-background px-6 text-sm font-bold hover:bg-secondary"
@@ -265,7 +266,7 @@ function Index() {
             Konsultasi stok, harga grosir bertingkat, dan estimasi pengiriman langsung dengan admin kami via WhatsApp.
           </p>
           <a
-            href="https://wa.me/6282276441753"
+            href={waChatUrl(branding?.phone)}
             target="_blank"
             rel="noreferrer"
             className="mt-7 inline-flex h-12 items-center gap-2 rounded-md bg-brand px-8 font-bold text-brand-foreground shadow hover:bg-brand-dark"

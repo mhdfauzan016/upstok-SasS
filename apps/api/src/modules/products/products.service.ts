@@ -38,6 +38,7 @@ export class ProductsService {
     const { rows, total } = await this.repo.listPublicAndCount({
       tenantId,
       categoryId: query.categoryId,
+      brandId: query.brandId,
       search: query.search,
       skip: (query.page - 1) * query.limit,
       take: query.limit,
@@ -84,6 +85,9 @@ export class ProductsService {
     if (dto.categoryId) {
       await this.assertCategory(tenantId, dto.categoryId);
     }
+    if (dto.brandId) {
+      await this.assertBrand(tenantId, dto.brandId);
+    }
 
     const slug = (dto.slug ?? this.slugify(dto.name)).toLowerCase();
     if (await this.repo.slugExists(tenantId, slug)) {
@@ -116,6 +120,7 @@ export class ProductsService {
         sizes: dto.sizes ?? [],
         status: (dto.status ?? 'draft') as ProductStatus,
         categoryId: dto.categoryId,
+        brandId: dto.brandId,
       });
     } catch (err) {
       throw this.mapUniqueViolation(err, slug, dto.sku);
@@ -159,6 +164,9 @@ export class ProductsService {
     if (dto.categoryId) {
       await this.assertCategory(tenantId, dto.categoryId);
     }
+    if (dto.brandId) {
+      await this.assertBrand(tenantId, dto.brandId);
+    }
     if (dto.sku && (await this.repo.skuExists(tenantId, dto.sku, id))) {
       throw new ConflictException({
         code: 'CONFLICT',
@@ -184,6 +192,12 @@ export class ProductsService {
         dto.categoryId === null
           ? { disconnect: true }
           : { connect: { id: dto.categoryId } };
+    }
+    if (dto.brandId !== undefined) {
+      data.brand =
+        dto.brandId === null
+          ? { disconnect: true }
+          : { connect: { id: dto.brandId } };
     }
 
     let updated: ProductRow;
@@ -240,6 +254,17 @@ export class ProductsService {
     }
   }
 
+  private async assertBrand(tenantId: string, brandId: string) {
+    const brand = await this.repo.findBrandInTenant(tenantId, brandId);
+    if (!brand) {
+      throw new UnprocessableEntityException({
+        code: 'VALIDATION_ERROR',
+        message: 'brandId does not belong to this tenant',
+        details: { brandId },
+      });
+    }
+  }
+
   private mapUniqueViolation(err: unknown, slug: string, sku?: string) {
     if (
       err instanceof Prisma.PrismaClientKnownRequestError &&
@@ -277,6 +302,7 @@ export class ProductsService {
       category: row.category
         ? { id: row.category.id, name: row.category.name }
         : null,
+      brand: row.brand ? { id: row.brand.id, name: row.brand.name } : null,
       status: row.status,
       stock,
       available: stock > 0,
@@ -287,9 +313,6 @@ export class ProductsService {
     return {
       ...this.toListItem(row),
       description: row.description ?? null,
-      category: row.category
-        ? { id: row.category.id, name: row.category.name }
-        : null,
       quantityAvailable: row.inventory?.quantityOnHand ?? 0,
     };
   }

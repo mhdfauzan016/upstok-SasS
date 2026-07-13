@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { useAdminOrders, useOrder, useUpdateOrderStatus } from "@/hooks/queries";
+import { useAdminOrders, useOrder, useUpdateOrderStatus, useBranding } from "@/hooks/queries";
 import { rupiah, formatDateTime } from "@/lib/format";
 import { buildWhatsAppApiOrderUrl } from "@/lib/whatsapp";
 import type { ApiOrderStatus } from "@/lib/api/types";
@@ -147,6 +147,7 @@ function AdminPesanan() {
 
 function OrderDrawer({ id, onClose }: { id: string; onClose: () => void }) {
   const { data: order, isLoading } = useOrder(id);
+  const { data: branding } = useBranding();
   const updateStatus = useUpdateOrderStatus();
 
   return (
@@ -248,7 +249,7 @@ function OrderDrawer({ id, onClose }: { id: string; onClose: () => void }) {
             </div>
 
             <a
-              href={buildWhatsAppApiOrderUrl(order)}
+              href={buildWhatsAppApiOrderUrl(order, branding?.phone)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#25D366] font-bold text-white hover:bg-[#1eb854]"
