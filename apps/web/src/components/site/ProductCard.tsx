@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { rupiah } from "@/lib/format";
 import type { Product } from "@/mock/types";
+import { Price } from "@/components/site/Price";
 
 export function ProductCard({ product }: { product: Product }) {
   const lowStock = product.stock < 200;
@@ -31,7 +31,7 @@ export function ProductCard({ product }: { product: Product }) {
           {product.name}
         </h3>
         <div className="mt-2 flex items-end justify-between">
-          <span className="text-base font-extrabold text-brand">{rupiah(product.price)}</span>
+          <Price amount={product.price} />
           <div className="flex items-center gap-1 text-[10px] font-medium">
             <span className={`size-1.5 rounded-full ${lowStock ? "bg-brand" : "bg-emerald-500"}`} />
             <span className="text-muted-foreground">

@@ -13,6 +13,14 @@ export interface LoginParams {
   scope: ApiScope;
 }
 
+/** Public customer self-registration (creates a `pending` account). */
+export interface RegisterParams {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+}
+
 export const authService = {
   /** Authenticate; stores the access token in memory on success. */
   async login(params: LoginParams): Promise<ApiAuthUser> {
@@ -21,6 +29,15 @@ export const authService = {
     });
     tokenStore.set(res.accessToken);
     return res.user;
+  },
+
+  /**
+   * Customer self-registration. Creates a `pending` account (no session) that a
+   * tenant admin must approve before the customer can log in. Tenant is resolved
+   * from the request host/header by the API.
+   */
+  async register(params: RegisterParams): Promise<void> {
+    await api.post("/auth/register", params, { auth: false });
   },
 
   /** Restore a session from the httpOnly refresh cookie (e.g. on app load). */

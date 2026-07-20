@@ -3,7 +3,8 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { useCart } from "@/store/cart";
 import { rupiah } from "@/lib/format";
-import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { Price, usePriceVisible } from "@/components/site/Price";
+import { Minus, Plus, Trash2, ShoppingBag, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/keranjang")({
   head: () => ({ meta: [{ title: "Keranjang — upstok" }] }),
@@ -15,6 +16,7 @@ function CartPage() {
   const setQty = useCart((s) => s.setQty);
   const remove = useCart((s) => s.remove);
   const total = useCart((s) => s.total());
+  const priceVisible = usePriceVisible();
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -47,7 +49,7 @@ function CartPage() {
                         <p className="text-xs text-muted-foreground">
                           {it.size && `Ukuran ${it.size}`}{it.size && it.color && " • "}{it.color}
                         </p>
-                        <p className="mt-1 text-brand font-extrabold">{rupiah(it.price)}</p>
+                        <div className="mt-1"><Price amount={it.price} size="sm" /></div>
                       </div>
                       <button
                         onClick={() => remove(it.productId, it.size, it.color)}
@@ -63,9 +65,11 @@ function CartPage() {
                         <span className="w-10 text-center text-sm font-bold">{it.qty}</span>
                         <button className="grid size-8 place-items-center hover:bg-secondary" onClick={() => setQty(it.productId, it.qty + 1, it.size, it.color)}><Plus className="size-3" /></button>
                       </div>
-                      <div className="text-sm">
-                        Subtotal: <span className="font-bold">{rupiah(it.price * it.qty)}</span>
-                      </div>
+                      {priceVisible && (
+                        <div className="text-sm">
+                          Subtotal: <span className="font-bold">{rupiah(it.price * it.qty)}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -87,14 +91,27 @@ function CartPage() {
               <div className="my-4 h-px bg-border" />
               <div className="flex items-baseline justify-between">
                 <span className="text-sm font-medium">Total</span>
-                <span className="text-2xl font-extrabold text-brand">{rupiah(total)}</span>
+                {priceVisible ? (
+                  <span className="text-2xl font-extrabold text-brand">{rupiah(total)}</span>
+                ) : (
+                  <span className="text-sm font-semibold text-primary">Login untuk lihat</span>
+                )}
               </div>
-              <Link
-                to="/checkout"
-                className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-md bg-primary px-6 font-bold text-primary-foreground hover:bg-primary/90"
-              >
-                Lanjut ke Checkout
-              </Link>
+              {priceVisible ? (
+                <Link
+                  to="/checkout"
+                  className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-md bg-primary px-6 font-bold text-primary-foreground hover:bg-primary/90"
+                >
+                  Lanjut ke Checkout
+                </Link>
+              ) : (
+                <Link
+                  to="/masuk"
+                  className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary px-6 font-bold text-primary-foreground hover:bg-primary/90"
+                >
+                  <Lock className="size-4" /> Login untuk Checkout
+                </Link>
+              )}
               <Link
                 to="/produk"
                 search={{ kategori: undefined as string | undefined }}

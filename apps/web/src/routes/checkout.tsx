@@ -4,11 +4,12 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { useCart } from "@/store/cart";
 import { useCreateOrder, useBranding } from "@/hooks/queries";
+import { useAuth } from "@/store/auth";
 import { rupiah } from "@/lib/format";
 import { buildWhatsAppApiOrderUrl } from "@/lib/whatsapp";
 import { ApiError } from "@/lib/api/errors";
 import { toast } from "sonner";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout — upstok" }] }),
@@ -21,6 +22,8 @@ function CheckoutPage() {
   const clear = useCart((s) => s.clear);
   const createOrder = useCreateOrder();
   const { data: branding } = useBranding();
+  const ready = useAuth((s) => s.ready);
+  const isCustomer = useAuth((s) => s.isCustomer);
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ name: "", phone: "", address: "", notes: "" });
@@ -66,6 +69,26 @@ function CheckoutPage() {
       },
     );
   };
+
+  // Checkout requires an approved customer session (prices + ordering gated).
+  if (ready && !isCustomer) {
+    return (
+      <div className="flex min-h-screen flex-col"><SiteHeader />
+        <div className="mx-auto max-w-md px-4 py-20 text-center">
+          <Lock className="mx-auto size-10 text-muted-foreground" />
+          <h1 className="mt-4 text-2xl font-bold">Login untuk memesan</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Harga grosir & checkout hanya untuk pelanggan terdaftar yang sudah disetujui admin.
+          </p>
+          <div className="mt-6 flex justify-center gap-3">
+            <Link to="/masuk" className="inline-flex h-11 items-center rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground hover:bg-primary/90">Masuk</Link>
+            <Link to="/daftar" className="inline-flex h-11 items-center rounded-md border border-border px-6 text-sm font-bold hover:bg-secondary">Daftar</Link>
+          </div>
+        </div>
+        <SiteFooter />
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

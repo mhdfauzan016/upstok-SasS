@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MasukRouteImport } from './routes/masuk'
 import { Route as KeranjangRouteImport } from './routes/keranjang'
+import { Route as DaftarRouteImport } from './routes/daftar'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdukIndexRouteImport } from './routes/produk.index'
@@ -18,15 +20,26 @@ import { Route as ProdukSlugRouteImport } from './routes/produk.$slug'
 import { Route as AdminProdukRouteImport } from './routes/admin.produk'
 import { Route as AdminPesananRouteImport } from './routes/admin.pesanan'
 import { Route as AdminPengaturanRouteImport } from './routes/admin.pengaturan'
+import { Route as AdminPelangganRouteImport } from './routes/admin.pelanggan'
 import { Route as AdminMerkRouteImport } from './routes/admin.merk'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminLaporanRouteImport } from './routes/admin.laporan'
 import { Route as AdminKategoriRouteImport } from './routes/admin.kategori'
 import { Route as AdminInventoriRouteImport } from './routes/admin.inventori'
 
+const MasukRoute = MasukRouteImport.update({
+  id: '/masuk',
+  path: '/masuk',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KeranjangRoute = KeranjangRouteImport.update({
   id: '/keranjang',
   path: '/keranjang',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DaftarRoute = DaftarRouteImport.update({
+  id: '/daftar',
+  path: '/daftar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -69,6 +82,11 @@ const AdminPengaturanRoute = AdminPengaturanRouteImport.update({
   path: '/admin/pengaturan',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPelangganRoute = AdminPelangganRouteImport.update({
+  id: '/admin/pelanggan',
+  path: '/admin/pelanggan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminMerkRoute = AdminMerkRouteImport.update({
   id: '/admin/merk',
   path: '/admin/merk',
@@ -98,12 +116,15 @@ const AdminInventoriRoute = AdminInventoriRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/daftar': typeof DaftarRoute
   '/keranjang': typeof KeranjangRoute
+  '/masuk': typeof MasukRoute
   '/admin/inventori': typeof AdminInventoriRoute
   '/admin/kategori': typeof AdminKategoriRoute
   '/admin/laporan': typeof AdminLaporanRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/merk': typeof AdminMerkRoute
+  '/admin/pelanggan': typeof AdminPelangganRoute
   '/admin/pengaturan': typeof AdminPengaturanRoute
   '/admin/pesanan': typeof AdminPesananRoute
   '/admin/produk': typeof AdminProdukRoute
@@ -114,12 +135,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/daftar': typeof DaftarRoute
   '/keranjang': typeof KeranjangRoute
+  '/masuk': typeof MasukRoute
   '/admin/inventori': typeof AdminInventoriRoute
   '/admin/kategori': typeof AdminKategoriRoute
   '/admin/laporan': typeof AdminLaporanRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/merk': typeof AdminMerkRoute
+  '/admin/pelanggan': typeof AdminPelangganRoute
   '/admin/pengaturan': typeof AdminPengaturanRoute
   '/admin/pesanan': typeof AdminPesananRoute
   '/admin/produk': typeof AdminProdukRoute
@@ -131,12 +155,15 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
+  '/daftar': typeof DaftarRoute
   '/keranjang': typeof KeranjangRoute
+  '/masuk': typeof MasukRoute
   '/admin/inventori': typeof AdminInventoriRoute
   '/admin/kategori': typeof AdminKategoriRoute
   '/admin/laporan': typeof AdminLaporanRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/merk': typeof AdminMerkRoute
+  '/admin/pelanggan': typeof AdminPelangganRoute
   '/admin/pengaturan': typeof AdminPengaturanRoute
   '/admin/pesanan': typeof AdminPesananRoute
   '/admin/produk': typeof AdminProdukRoute
@@ -149,12 +176,15 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/checkout'
+    | '/daftar'
     | '/keranjang'
+    | '/masuk'
     | '/admin/inventori'
     | '/admin/kategori'
     | '/admin/laporan'
     | '/admin/login'
     | '/admin/merk'
+    | '/admin/pelanggan'
     | '/admin/pengaturan'
     | '/admin/pesanan'
     | '/admin/produk'
@@ -165,12 +195,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/checkout'
+    | '/daftar'
     | '/keranjang'
+    | '/masuk'
     | '/admin/inventori'
     | '/admin/kategori'
     | '/admin/laporan'
     | '/admin/login'
     | '/admin/merk'
+    | '/admin/pelanggan'
     | '/admin/pengaturan'
     | '/admin/pesanan'
     | '/admin/produk'
@@ -181,12 +214,15 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/checkout'
+    | '/daftar'
     | '/keranjang'
+    | '/masuk'
     | '/admin/inventori'
     | '/admin/kategori'
     | '/admin/laporan'
     | '/admin/login'
     | '/admin/merk'
+    | '/admin/pelanggan'
     | '/admin/pengaturan'
     | '/admin/pesanan'
     | '/admin/produk'
@@ -198,12 +234,15 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
+  DaftarRoute: typeof DaftarRoute
   KeranjangRoute: typeof KeranjangRoute
+  MasukRoute: typeof MasukRoute
   AdminInventoriRoute: typeof AdminInventoriRoute
   AdminKategoriRoute: typeof AdminKategoriRoute
   AdminLaporanRoute: typeof AdminLaporanRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMerkRoute: typeof AdminMerkRoute
+  AdminPelangganRoute: typeof AdminPelangganRoute
   AdminPengaturanRoute: typeof AdminPengaturanRoute
   AdminPesananRoute: typeof AdminPesananRoute
   AdminProdukRoute: typeof AdminProdukRoute
@@ -214,11 +253,25 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/masuk': {
+      id: '/masuk'
+      path: '/masuk'
+      fullPath: '/masuk'
+      preLoaderRoute: typeof MasukRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/keranjang': {
       id: '/keranjang'
       path: '/keranjang'
       fullPath: '/keranjang'
       preLoaderRoute: typeof KeranjangRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/daftar': {
+      id: '/daftar'
+      path: '/daftar'
+      fullPath: '/daftar'
+      preLoaderRoute: typeof DaftarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -277,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPengaturanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/pelanggan': {
+      id: '/admin/pelanggan'
+      path: '/admin/pelanggan'
+      fullPath: '/admin/pelanggan'
+      preLoaderRoute: typeof AdminPelangganRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/merk': {
       id: '/admin/merk'
       path: '/admin/merk'
@@ -318,12 +378,15 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
+  DaftarRoute: DaftarRoute,
   KeranjangRoute: KeranjangRoute,
+  MasukRoute: MasukRoute,
   AdminInventoriRoute: AdminInventoriRoute,
   AdminKategoriRoute: AdminKategoriRoute,
   AdminLaporanRoute: AdminLaporanRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMerkRoute: AdminMerkRoute,
+  AdminPelangganRoute: AdminPelangganRoute,
   AdminPengaturanRoute: AdminPengaturanRoute,
   AdminPesananRoute: AdminPesananRoute,
   AdminProdukRoute: AdminProdukRoute,

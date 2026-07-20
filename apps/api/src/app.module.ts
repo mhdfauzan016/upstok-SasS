@@ -7,6 +7,7 @@ import { TenantsModule } from './modules/tenants/tenants.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { BrandsModule } from './modules/brands/brands.module';
+import { CustomersModule } from './modules/customers/customers.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ReportsModule } from './modules/reports/reports.module';
@@ -20,6 +21,7 @@ import { ReportsModule } from './modules/reports/reports.module';
     ProductsModule,
     CategoriesModule,
     BrandsModule,
+    CustomersModule,
     InventoryModule,
     OrdersModule,
     ReportsModule,

@@ -1,10 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { ShoppingCart, Search, MessageCircle, Menu, X, ChevronDown } from "lucide-react";
+import { ShoppingCart, Search, MessageCircle, Menu, X, ChevronDown, User, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/store/cart";
 import { useCategories, useBranding } from "@/hooks/queries";
+import { useAuth } from "@/store/auth";
 import { resolveTenantSlug } from "@/lib/tenant/resolve";
 import { waChatUrl } from "@/lib/whatsapp";
+import { toast } from "sonner";
 
 export function SiteHeader() {
   const count = useCart((s) => s.count());
@@ -16,6 +18,14 @@ export function SiteHeader() {
 
   const { data: categories = [] } = useCategories();
   const { data: branding } = useBranding();
+  const isCustomer = useAuth((s) => s.isCustomer);
+  const customerName = useAuth((s) => s.user?.name);
+  const logout = useAuth((s) => s.logout);
+  const onLogout = async () => {
+    await logout();
+    toast.success("Anda telah keluar");
+    navigate({ to: "/" });
+  };
   const storeName = branding?.name ?? `Toko ${resolveTenantSlug()}`;
   const initial = storeName.charAt(0).toUpperCase() || "S";
 
@@ -103,6 +113,27 @@ export function SiteHeader() {
             </span>
           )}
         </Link>
+
+        {/* customer session */}
+        {isCustomer ? (
+          <div className="hidden items-center gap-2 md:flex">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+              <User className="size-4 text-primary" /> {customerName}
+            </span>
+            <button
+              onClick={onLogout}
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
+              title="Keluar"
+            >
+              <LogOut className="size-4" />
+            </button>
+          </div>
+        ) : (
+          <div className="hidden items-center gap-2 md:flex">
+            <Link to="/masuk" className="rounded-md px-3 py-1.5 text-sm font-bold text-primary hover:bg-secondary">Masuk</Link>
+            <Link to="/daftar" className="rounded-md bg-primary px-3 py-1.5 text-sm font-bold text-primary-foreground hover:bg-primary/90">Daftar</Link>
+          </div>
+        )}
       </div>
 
       {/* primary nav */}
@@ -200,6 +231,21 @@ export function SiteHeader() {
               </Link>
             ))}
             <a href={waChatUrl(branding?.phone)} target="_blank" rel="noreferrer" onClick={() => setOpen(false)} className="block rounded px-3 py-2 text-sm text-muted-foreground hover:bg-secondary">Kontak</a>
+            <div className="mt-2 border-t border-border pt-2">
+              {isCustomer ? (
+                <>
+                  <div className="px-3 py-2 text-sm font-medium text-foreground"><User className="mr-1.5 inline size-4 text-primary" />{customerName}</div>
+                  <button onClick={() => { setOpen(false); void onLogout(); }} className="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-sm text-destructive hover:bg-destructive/10">
+                    <LogOut className="size-4" /> Keluar
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/masuk" onClick={() => setOpen(false)} className="block rounded px-3 py-2 text-sm font-bold text-primary hover:bg-secondary">Masuk</Link>
+                  <Link to="/daftar" onClick={() => setOpen(false)} className="block rounded px-3 py-2 text-sm font-bold text-primary hover:bg-secondary">Daftar</Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}

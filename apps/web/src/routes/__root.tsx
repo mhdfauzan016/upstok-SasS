@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { useAuth } from "@/store/auth";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -121,6 +122,14 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Restore any active session (admin or customer) from the refresh cookie so
+  // the storefront knows whether to reveal prices.
+  const ready = useAuth((s) => s.ready);
+  const bootstrap = useAuth((s) => s.bootstrap);
+  useEffect(() => {
+    if (!ready) void bootstrap();
+  }, [ready, bootstrap]);
 
   return (
     <QueryClientProvider client={queryClient}>

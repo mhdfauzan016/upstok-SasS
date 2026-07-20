@@ -25,6 +25,10 @@ import {
   brandsService,
   type SaveBrandInput,
 } from "@/services/brands.service";
+import {
+  customersService,
+  type ListCustomersParams,
+} from "@/services/customers.service";
 import { reportsService, type ReportRange } from "@/services/reports.service";
 import type {
   ApiOrderStatus,
@@ -42,6 +46,8 @@ export const queryKeys = {
     ["product", resolveTenantSlug(), slug] as const,
   categories: () => ["categories", resolveTenantSlug()] as const,
   brands: () => ["brands", resolveTenantSlug()] as const,
+  customers: (params: ListCustomersParams) =>
+    ["customers", resolveTenantSlug(), params] as const,
   branding: () => ["tenant-branding", resolveTenantSlug()] as const,
   tenantProfile: () => ["tenant-profile", resolveTenantSlug()] as const,
   inventory: (params: ListInventoryParams) =>
@@ -185,6 +191,25 @@ export function useDeleteBrand() {
   return useMutation({
     mutationFn: (id: string) => brandsService.remove(id),
     onSuccess: invalidate,
+  });
+}
+
+export function useCustomers(params: ListCustomersParams = {}) {
+  return useQuery({
+    queryKey: queryKeys.customers(params),
+    queryFn: () => customersService.list(params),
+    staleTime: 15_000,
+  });
+}
+
+export function useSetCustomerStatus() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id: string; status: "active" | "disabled" }) =>
+      customersService.setStatus(vars.id, vars.status),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["customers", resolveTenantSlug()] });
+    },
   });
 }
 

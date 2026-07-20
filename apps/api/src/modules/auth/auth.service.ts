@@ -1,13 +1,16 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { AuditService } from '../../shared/audit/audit.service';
 import type { AuthUser, TenantContext } from '../../common/decorators';
 import { AuthRepository, Scope, SubjectRecord } from './auth.repository';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import {
   PasswordResetDto,
   PasswordResetRequestDto,
@@ -77,6 +80,56 @@ export class AuthService {
     });
 
     return result;
+  }
+
+  /**
+   * POST /auth/register — public customer self-registration. Creates a
+   * `pending` account (no session issued) that a tenant admin must approve.
+   */
+  async register(dto: RegisterDto, tenant?: TenantContext): Promise<void> {
+    if (!tenant) {
+      throw new BadRequestException({
+        code: 'TENANT_REQUIRED',
+        message: 'X-Tenant-Slug is required to register',
+      });
+    }
+
+    const email = dto.email.toLowerCase();
+    const passwordHash = await this.passwords.hash(dto.password);
+
+    let customerId: string;
+    try {
+      const created = await this.repo.createCustomer({
+        tenantId: tenant.tenantId,
+        email,
+        name: dto.name,
+        phone: dto.phone,
+        passwordHash,
+      });
+      customerId = created.id;
+    } catch (err) {
+      // Unique (tenantId, email) violation → email already registered.
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        throw new ConflictException({
+          code: 'CONFLICT',
+          message: 'email is already registered',
+        });
+      }
+      throw err;
+    }
+
+    await this.audit.record({
+      tenantId: tenant.tenantId,
+      actorId: customerId,
+      actorScope: 'customer',
+      action: 'customer.registered',
+      targetType: 'customer',
+      targetId: customerId,
+      metadata: { email },
+    });
   }
 
   /** POST /auth/refresh — rotation with reuse detection. */

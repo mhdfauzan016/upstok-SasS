@@ -93,6 +93,27 @@ export class AuthRepository {
     };
   }
 
+  /** Customer self-registration: creates a `pending` account. */
+  createCustomer(params: {
+    tenantId: string;
+    email: string;
+    name: string;
+    phone: string;
+    passwordHash: string;
+  }) {
+    return this.prisma.customer.create({
+      data: {
+        tenantId: params.tenantId,
+        email: params.email,
+        name: params.name,
+        phone: params.phone,
+        passwordHash: params.passwordHash,
+        status: 'pending',
+      },
+      select: { id: true },
+    });
+  }
+
   async getSubjectById(
     scope: Scope,
     id: string,

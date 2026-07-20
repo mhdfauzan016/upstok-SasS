@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/store/auth";
 import { useBranding } from "@/hooks/queries";
 import { resolveTenantSlug } from "@/lib/tenant/resolve";
-import { LayoutDashboard, Package, FolderTree, Tags, ShoppingBag, Warehouse, FileBarChart, Settings, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Package, FolderTree, Tags, Users, ShoppingBag, Warehouse, FileBarChart, Settings, LogOut, Menu } from "lucide-react";
 
 /** First letter of a label, for the logo/avatar fallback. */
 const initial = (s: string | undefined | null) =>
@@ -15,6 +15,7 @@ const nav = [
   { to: "/admin/kategori", label: "Kategori", icon: FolderTree },
   { to: "/admin/merk", label: "Merk", icon: Tags },
   { to: "/admin/pesanan", label: "Pesanan", icon: ShoppingBag },
+  { to: "/admin/pelanggan", label: "Pelanggan", icon: Users },
   { to: "/admin/inventori", label: "Inventori", icon: Warehouse },
   { to: "/admin/laporan", label: "Laporan", icon: FileBarChart },
   { to: "/admin/pengaturan", label: "Pengaturan", icon: Settings },

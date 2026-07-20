@@ -18,6 +18,7 @@ import {
 } from '../../common/decorators';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import {
   PasswordResetDto,
   PasswordResetRequestDto,
@@ -42,6 +43,18 @@ export class AuthController {
     const result = await this.auth.login(dto, tenant);
     this.setRefreshCookie(res, result.refreshToken);
     return { accessToken: result.accessToken, user: result.user };
+  }
+
+  /** POST /auth/register — public customer self-registration (pending). */
+  @Public()
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  async register(
+    @Body() dto: RegisterDto,
+    @CurrentTenant() tenant: TenantContext | undefined,
+  ) {
+    await this.auth.register(dto, tenant);
+    return { registered: true };
   }
 
   /** POST /auth/refresh */

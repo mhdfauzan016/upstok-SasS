@@ -9,8 +9,9 @@ import { waChatUrl } from "@/lib/whatsapp";
 import type { Product } from "@/mock/types";
 import { useCart } from "@/store/cart";
 import { rupiah } from "@/lib/format";
+import { Price, usePriceVisible } from "@/components/site/Price";
 import { toast } from "sonner";
-import { Minus, Plus, ShoppingCart, Truck, ShieldCheck, MessageCircle } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Truck, ShieldCheck, MessageCircle, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/produk/$slug")({
   loader: async ({ params }) => {
@@ -46,6 +47,7 @@ function ProductDetail() {
   const { data: categories = [] } = useCategories();
   const { data: branding } = useBranding();
   const cat = categories.find((c) => c.id === product.categoryId);
+  const priceVisible = usePriceVisible();
   const navigate = useNavigate();
   const add = useCart((s) => s.add);
 
@@ -106,8 +108,8 @@ function ProductDetail() {
             <p className="font-mono text-xs text-muted-foreground">SKU: {product.sku}</p>
             <h1 className="mt-1 text-2xl font-extrabold md:text-3xl">{product.name}</h1>
             <div className="mt-4 flex items-baseline gap-3">
-              <span className="text-4xl font-extrabold text-brand">{rupiah(product.price)}</span>
-              <span className="text-sm text-muted-foreground">/ pasang</span>
+              <Price amount={product.price} size="lg" className="!text-4xl" />
+              {priceVisible && <span className="text-sm text-muted-foreground">/ pasang</span>}
             </div>
             <div className="mt-2 inline-flex items-center gap-1.5 rounded bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700">
               <span className="size-1.5 rounded-full bg-emerald-500" /> Stok {product.stock} pasang
@@ -161,24 +163,37 @@ function ProductDetail() {
                 />
                 <button className="grid size-10 place-items-center hover:bg-secondary" onClick={() => setQty(qty + 1)}><Plus className="size-4" /></button>
               </div>
-              <div className="text-sm text-muted-foreground">
-                Subtotal: <span className="font-bold text-foreground">{rupiah(product.price * qty)}</span>
-              </div>
+              {priceVisible && (
+                <div className="text-sm text-muted-foreground">
+                  Subtotal: <span className="font-bold text-foreground">{rupiah(product.price * qty)}</span>
+                </div>
+              )}
             </div>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                onClick={() => addToCart(false)}
-                className="inline-flex h-12 items-center gap-2 rounded-md border-2 border-primary px-6 text-sm font-bold text-primary hover:bg-primary hover:text-primary-foreground"
-              >
-                <ShoppingCart className="size-4" /> Tambah ke Keranjang
-              </button>
-              <button
-                onClick={() => addToCart(true)}
-                className="inline-flex h-12 items-center gap-2 rounded-md bg-brand px-6 text-sm font-bold text-brand-foreground hover:bg-brand-dark"
-              >
-                Beli Sekarang
-              </button>
+              {priceVisible ? (
+                <>
+                  <button
+                    onClick={() => addToCart(false)}
+                    className="inline-flex h-12 items-center gap-2 rounded-md border-2 border-primary px-6 text-sm font-bold text-primary hover:bg-primary hover:text-primary-foreground"
+                  >
+                    <ShoppingCart className="size-4" /> Tambah ke Keranjang
+                  </button>
+                  <button
+                    onClick={() => addToCart(true)}
+                    className="inline-flex h-12 items-center gap-2 rounded-md bg-brand px-6 text-sm font-bold text-brand-foreground hover:bg-brand-dark"
+                  >
+                    Beli Sekarang
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/masuk"
+                  className="inline-flex h-12 items-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground hover:bg-primary/90"
+                >
+                  <Lock className="size-4" /> Login untuk lihat harga & pesan
+                </Link>
+              )}
               <a
                 href={waChatUrl(branding?.phone, `Halo Admin, saya tertarik dengan ${product.name} (${product.sku}). Bisa info stok dan harga grosirnya?`)}
                 target="_blank"

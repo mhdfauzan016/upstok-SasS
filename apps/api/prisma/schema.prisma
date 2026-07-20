@@ -53,6 +53,7 @@ enum PlatformStatus {
 }
 
 enum CustomerStatus {
+  pending
   active
   disabled
 }
