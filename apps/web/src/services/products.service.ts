@@ -28,6 +28,7 @@ function mapProduct(
     brandId: src.brand?.id ?? "",
     price: Math.round(src.price.amount / 100),
     stock: src.stock,
+    minPurchase: src.minPurchase ?? 1,
     description: detail.description ?? "",
     sizes: src.sizes ?? [],
     colors: src.colors ?? [],
@@ -58,6 +59,7 @@ export interface SaveProductInput {
   sku: string;
   slug?: string;
   priceRupiah: number;
+  minPurchase: number;
   description?: string;
   images: string[];
   colors: string[];
@@ -117,6 +119,7 @@ export const productsService = {
       sku: input.sku,
       slug: input.slug || undefined,
       price: { amount: Math.round(input.priceRupiah * 100), currency: "IDR" },
+      minPurchase: input.minPurchase,
       description: input.description || undefined,
       images: input.images,
       colors: input.colors,
@@ -133,6 +136,7 @@ export const productsService = {
       name: input.name,
       sku: input.sku,
       price: { amount: Math.round(input.priceRupiah * 100), currency: "IDR" },
+      minPurchase: input.minPurchase,
       description: input.description || undefined,
       images: input.images,
       colors: input.colors,

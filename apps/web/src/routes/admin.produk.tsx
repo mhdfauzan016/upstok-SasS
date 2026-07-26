@@ -29,7 +29,7 @@ export const Route = createFileRoute("/admin/produk")({
 });
 
 /** Inline validation messages keyed by form field. */
-type FieldErrors = { name?: string; sku?: string; price?: string; images?: string };
+type FieldErrors = { name?: string; sku?: string; price?: string; minPurchase?: string; images?: string };
 
 function AdminProduk() {
   const [q, setQ] = useState("");
@@ -120,6 +120,7 @@ function AdminProduk() {
       sku: p.sku.trim(),
       slug: p.slug || undefined,
       priceRupiah: p.price,
+      minPurchase: p.minPurchase,
       description: p.description || undefined,
       // Only persist real uploaded URLs; drop the UI's local fallback asset
       // (a bundled relative path) which the API rejects as a non-URL.
@@ -269,7 +270,7 @@ function AdminProduk() {
 function ProductDialog({ product, categories, brands, saving, onClose, onSave }: { product: Product | null; categories: CategoryOption[]; brands: BrandOption[]; saving: boolean; onClose: () => void; onSave: (p: Product) => Promise<FieldErrors | null> }) {
   const empty: Product = {
     id: `p${Date.now()}`, slug: "", name: "", sku: "", categoryId: "", brandId: "",
-    price: 0, stock: 0, description: "",
+    price: 0, stock: 0, minPurchase: 1, description: "",
     sizes: [], colors: [],
     images: [],
   };
@@ -278,6 +279,7 @@ function ProductDialog({ product, categories, brands, saving, onClose, onSave }:
   // (an empty string, not a stuck "0"); we parse back to a number on change.
   const [priceStr, setPriceStr] = useState(product ? String(product.price) : "");
   const [stockStr, setStockStr] = useState(product ? String(product.stock) : "");
+  const [minPurchaseStr, setMinPurchaseStr] = useState(product ? String(product.minPurchase) : "1");
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const fileInput = useRef<HTMLInputElement>(null);
@@ -295,6 +297,9 @@ function ProductDialog({ product, categories, brands, saving, onClose, onSave }:
 
     if (priceStr.trim() === "") e.price = "Harga wajib diisi";
     else if (Number(priceStr) <= 0) e.price = "Harga harus lebih dari 0";
+
+    if (minPurchaseStr.trim() === "") e.minPurchase = "Minimum pembelian wajib diisi";
+    else if (Number(minPurchaseStr) < 1) e.minPurchase = "Minimum pembelian minimal 1";
 
     return e;
   };
@@ -355,7 +360,7 @@ function ProductDialog({ product, categories, brands, saving, onClose, onSave }:
 
   /** Accept only digits (or empty); keep the raw string and sync a numeric value. */
   const onNumericChange =
-    (setStr: (v: string) => void, key: "price" | "stock") =>
+    (setStr: (v: string) => void, key: "price" | "stock" | "minPurchase") =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const raw = e.target.value;
       if (raw !== "" && !/^\d+$/.test(raw)) return; // reject non-digits
@@ -382,6 +387,7 @@ function ProductDialog({ product, categories, brands, saving, onClose, onSave }:
             <Field label="Merk"><select value={form.brandId} onChange={(e) => setForm({ ...form, brandId: e.target.value })} className="input"><option value="">Tanpa Merk</option>{brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}</select></Field>
             <Field label="Harga (Rp) *" error={errors.price}><input type="text" inputMode="numeric" value={priceStr} onChange={(e) => { onNumericChange(setPriceStr, "price")(e); clearError("price"); }} placeholder="0" className={`input ${errors.price ? "input-error" : ""}`} /></Field>
             <Field label="Stok"><input type="text" inputMode="numeric" value={stockStr} onChange={onNumericChange(setStockStr, "stock")} placeholder="0" className="input" /></Field>
+            <Field label="Minimum Pembelian *" error={errors.minPurchase}><input type="text" inputMode="numeric" value={minPurchaseStr} onChange={(e) => { onNumericChange(setMinPurchaseStr, "minPurchase")(e); clearError("minPurchase"); }} placeholder="1" className={`input ${errors.minPurchase ? "input-error" : ""}`} /></Field>
             <Field label="Ukuran (pisah koma)"><input value={form.sizes.join(",")} onChange={(e) => setForm({ ...form, sizes: e.target.value.split(",").map((s) => s.trim()) })} className="input" /></Field>
             <Field label="Warna (pisah koma)" className="sm:col-span-2"><input value={form.colors.join(",")} onChange={(e) => setForm({ ...form, colors: e.target.value.split(",").map((s) => s.trim()) })} className="input" /></Field>
             <Field label="Deskripsi" className="sm:col-span-2"><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="input min-h-[80px]" /></Field>

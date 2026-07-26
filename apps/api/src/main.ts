@@ -50,6 +50,12 @@ async function bootstrap(): Promise<void> {
     bufferLogs: false,
   });
 
+  // Behind a TLS-terminating reverse proxy in production. Trusting the proxy
+  // makes `req.protocol` honor X-Forwarded-Proto (https), so absolute URLs we
+  // build — notably product image URLs — use https and aren't blocked as mixed
+  // content on the HTTPS storefront.
+  app.set('trust proxy', true);
+
   app.use(cookieParser());
   app.setGlobalPrefix(appConfig.apiPrefix.replace(/^\//, ''));
 

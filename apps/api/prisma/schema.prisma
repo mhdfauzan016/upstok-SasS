@@ -282,6 +282,7 @@ model Product {
   description String?
   priceAmount Int            @map("price_amount")
   currency    String         @db.Char(3)
+  minPurchase Int            @default(1) @map("min_purchase")
   images      Json           @default("[]")
   colors      Json           @default("[]")
   sizes       Json           @default("[]")

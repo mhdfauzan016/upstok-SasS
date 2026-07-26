@@ -12,6 +12,7 @@ export interface ProductListItem {
   slug: string;
   sku: string;
   price: Money;
+  minPurchase: number;
   images: string[];
   colors: string[];
   sizes: string[];

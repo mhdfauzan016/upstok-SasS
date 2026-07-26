@@ -16,6 +16,7 @@ export interface CreateProductParams {
   description?: string;
   priceAmount: number;
   currency: string;
+  minPurchase: number;
   images: string[];
   colors: string[];
   sizes: string[];
@@ -112,6 +113,7 @@ export class ProductsRepository {
         description: params.description,
         priceAmount: params.priceAmount,
         currency: params.currency,
+        minPurchase: params.minPurchase,
         images: params.images,
         colors: params.colors,
         sizes: params.sizes,

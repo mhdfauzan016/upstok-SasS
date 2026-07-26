@@ -48,6 +48,18 @@ export class OrdersService {
       });
     }
 
+    // Enforce each product's minimum purchase quantity set by the console.
+    const belowMin = products
+      .filter((p) => wanted.get(p.id)! < p.minPurchase)
+      .map((p) => ({ productId: p.id, minPurchase: p.minPurchase }));
+    if (belowMin.length > 0) {
+      throw new UnprocessableEntityException({
+        code: 'VALIDATION_ERROR',
+        message: 'one or more items are below the minimum purchase quantity',
+        details: { belowMin },
+      });
+    }
+
     await this.assertOrderLimit(tenantId);
 
     const currency = products[0].currency;

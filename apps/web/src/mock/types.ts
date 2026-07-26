@@ -13,6 +13,7 @@ export type Product = {
   brandId?: string;
   price: number;
   stock: number;
+  minPurchase: number;
   description: string;
   sizes: string[];
   colors: string[];

@@ -56,6 +56,12 @@ export class CreateProductDto {
   @Type(() => MoneyDto)
   price!: MoneyDto;
 
+  /** Minimum order quantity a customer must buy. Defaults to 1. */
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  minPurchase?: number;
+
   @IsOptional()
   @IsUUID()
   categoryId?: string;

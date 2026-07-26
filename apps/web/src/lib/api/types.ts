@@ -17,6 +17,7 @@ export interface ApiProductListItem {
   slug: string;
   sku: string;
   price: ApiMoney;
+  minPurchase: number;
   images: string[];
   colors: string[];
   sizes: string[];

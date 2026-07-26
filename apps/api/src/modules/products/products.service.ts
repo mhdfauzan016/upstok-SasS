@@ -115,6 +115,7 @@ export class ProductsService {
         description: dto.description,
         priceAmount: dto.price.amount,
         currency: dto.price.currency.toUpperCase(),
+        minPurchase: dto.minPurchase ?? 1,
         images: dto.images ?? [],
         colors: dto.colors ?? [],
         sizes: dto.sizes ?? [],
@@ -183,6 +184,7 @@ export class ProductsService {
     if (dto.colors !== undefined) data.colors = dto.colors;
     if (dto.sizes !== undefined) data.sizes = dto.sizes;
     if (dto.status !== undefined) data.status = dto.status as ProductStatus;
+    if (dto.minPurchase !== undefined) data.minPurchase = dto.minPurchase;
     if (dto.price !== undefined) {
       data.priceAmount = dto.price.amount;
       data.currency = dto.price.currency.toUpperCase();
@@ -296,6 +298,7 @@ export class ProductsService {
       slug: row.slug,
       sku: row.sku,
       price: { amount: row.priceAmount, currency: row.currency },
+      minPurchase: row.minPurchase,
       images: (row.images as string[]) ?? [],
       colors: (row.colors as string[]) ?? [],
       sizes: (row.sizes as string[]) ?? [],

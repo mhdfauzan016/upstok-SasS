@@ -51,9 +51,10 @@ function ProductDetail() {
   const navigate = useNavigate();
   const add = useCart((s) => s.add);
 
+  const minQty = Math.max(1, product.minPurchase);
   const [size, setSize] = useState(product.sizes[0]);
   const [color, setColor] = useState(product.colors[0]);
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState(minQty);
   const [activeImg, setActiveImg] = useState(0);
 
   const addToCart = (goToCart = false) => {
@@ -114,6 +115,11 @@ function ProductDetail() {
             <div className="mt-2 inline-flex items-center gap-1.5 rounded bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700">
               <span className="size-1.5 rounded-full bg-emerald-500" /> Stok {product.stock} pasang
             </div>
+            {minQty > 1 && (
+              <div className="mt-2 inline-flex items-center gap-1.5 rounded bg-amber-50 px-2 py-1 text-xs font-bold text-amber-700">
+                Minimum pembelian {minQty} pasang
+              </div>
+            )}
 
             <p className="mt-6 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
 
@@ -153,12 +159,12 @@ function ProductDetail() {
 
             <div className="mt-6 flex items-center gap-4">
               <div className="inline-flex items-center rounded-md border border-border">
-                <button className="grid size-10 place-items-center hover:bg-secondary" onClick={() => setQty(Math.max(1, qty - 1))}><Minus className="size-4" /></button>
+                <button className="grid size-10 place-items-center hover:bg-secondary" onClick={() => setQty(Math.max(minQty, qty - 1))}><Minus className="size-4" /></button>
                 <input
                   type="number"
-                  min={1}
+                  min={minQty}
                   value={qty}
-                  onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))}
+                  onChange={(e) => setQty(Math.max(minQty, Number(e.target.value) || minQty))}
                   className="h-10 w-16 border-x border-border bg-transparent text-center text-sm font-bold outline-none"
                 />
                 <button className="grid size-10 place-items-center hover:bg-secondary" onClick={() => setQty(qty + 1)}><Plus className="size-4" /></button>

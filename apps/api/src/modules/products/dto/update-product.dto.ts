@@ -50,6 +50,12 @@ export class UpdateProductDto {
   @Type(() => MoneyDto)
   price?: MoneyDto;
 
+  /** Minimum order quantity a customer must buy. */
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  minPurchase?: number;
+
   @IsOptional()
   @IsUUID()
   categoryId?: string | null;

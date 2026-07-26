@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   createParamDecorator,
   ExecutionContext,
   SetMetadata,
@@ -38,9 +39,25 @@ export interface TenantContext {
   status: string;
 }
 
-/** Injects the resolved tenant context into a handler argument. */
+/**
+ * Injects the resolved tenant context into a handler argument.
+ *
+ * Every route that injects this requires a tenant, so if the resolver
+ * middleware attached none (no `X-Tenant-Slug` header and no tenant subdomain —
+ * e.g. the API host hit directly), fail with a clear 400 instead of letting the
+ * handler dereference `undefined` and crash with a raw 500.
+ */
 export const CurrentTenant = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext): TenantContext => {
-    return ctx.switchToHttp().getRequest().tenant;
+    const tenant: TenantContext | undefined =
+      ctx.switchToHttp().getRequest().tenant;
+    if (!tenant) {
+      throw new BadRequestException({
+        code: 'TENANT_REQUIRED',
+        message:
+          'no tenant resolved for this request (missing X-Tenant-Slug header or tenant subdomain)',
+      });
+    }
+    return tenant;
   },
 );

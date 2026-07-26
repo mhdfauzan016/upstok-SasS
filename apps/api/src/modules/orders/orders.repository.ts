@@ -53,6 +53,7 @@ export class OrdersRepository {
         sku: true,
         priceAmount: true,
         currency: true,
+        minPurchase: true,
       },
     });
   }
