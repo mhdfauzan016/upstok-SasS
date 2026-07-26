@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -9,7 +10,12 @@ import {
   Patch,
   Post,
   Query,
+  Req,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import type { Request } from 'express';
 import {
   AuthUser,
   CurrentTenant,
@@ -24,6 +30,10 @@ import { ListTenantsQueryDto } from './dto/list-tenants-query.dto';
 import { UpdateTenantStatusDto } from './dto/update-tenant-status.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { TenantsService } from './tenants.service';
+import {
+  buildHeroImageUrl,
+  heroImageMulterOptions,
+} from './tenants.upload';
 
 /**
  * Tenant self-service surface: /tenants (public signup), /tenant (console),
@@ -65,6 +75,29 @@ export class TenantsController {
       dto,
       actor,
     );
+  }
+
+  /**
+   * POST /tenant/hero-uploads — upload a single hero/slideshow image (console).
+   * Returns `{ url }`; the client appends returned URLs to the tenant's
+   * `branding.heroImages` array via PATCH /tenant.
+   */
+  @Post('tenant/hero-uploads')
+  @RequirePermission(Permission.SETTINGS_WRITE)
+  @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(FileInterceptor('file', heroImageMulterOptions))
+  uploadHeroImage(
+    @CurrentTenant() tenant: TenantContext,
+    @Req() req: Request,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException({
+        code: 'VALIDATION_ERROR',
+        message: 'no file provided (expected multipart field "file")',
+      });
+    }
+    return { url: buildHeroImageUrl(req, tenant.tenantId, file.filename) };
   }
 
   /** GET /tenant/branding — public storefront theming. */

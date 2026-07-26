@@ -166,6 +166,7 @@ export interface ApiTenantBranding {
   address: string | null;
   phone: string | null;
   email: string | null;
+  heroImages: string[];
 }
 
 /** GET /tenant — console profile (auth required). */
@@ -182,6 +183,7 @@ export interface ApiTenantProfile {
     address: string | null;
     phone: string | null;
     email: string | null;
+    heroImages: string[];
   };
   plan: { code: string; name: string } | null;
   subscriptionStatus: string | null;
@@ -195,6 +197,7 @@ export interface UpdateTenantPayload {
     address?: string;
     phone?: string;
     email?: string;
+    heroImages?: string[];
   };
 }
 

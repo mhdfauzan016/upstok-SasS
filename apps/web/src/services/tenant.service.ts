@@ -20,4 +20,15 @@ export const tenantService = {
   updateProfile(payload: UpdateTenantPayload): Promise<ApiTenantProfile> {
     return api.patch<ApiTenantProfile>("/tenant", payload);
   },
+
+  /**
+   * Uploads a single hero/slideshow image (multipart) and returns its public
+   * URL. Requires an authenticated tenant session with `settings:write`.
+   */
+  async uploadHeroImage(file: File): Promise<string> {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await api.post<{ url: string }>("/tenant/hero-uploads", fd);
+    return res.url;
+  },
 };

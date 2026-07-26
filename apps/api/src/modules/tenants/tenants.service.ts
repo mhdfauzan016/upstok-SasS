@@ -189,16 +189,19 @@ export class TenantsService {
         message: 'this store is currently unavailable',
       });
     }
-    const branding = (tenant.branding ?? {}) as Record<string, string>;
+    const branding = (tenant.branding ?? {}) as Record<string, unknown>;
     return {
       name: tenant.name,
-      logoUrl: branding.logoUrl ?? null,
-      primaryColor: branding.primaryColor ?? null,
-      theme: branding.theme ?? null,
-      description: branding.description ?? null,
-      address: branding.address ?? null,
-      phone: branding.phone ?? null,
-      email: branding.email ?? null,
+      logoUrl: (branding.logoUrl as string) ?? null,
+      primaryColor: (branding.primaryColor as string) ?? null,
+      theme: (branding.theme as string) ?? null,
+      description: (branding.description as string) ?? null,
+      address: (branding.address as string) ?? null,
+      phone: (branding.phone as string) ?? null,
+      email: (branding.email as string) ?? null,
+      heroImages: Array.isArray(branding.heroImages)
+        ? (branding.heroImages as string[])
+        : [],
     };
   }
 
@@ -274,20 +277,23 @@ export class TenantsService {
       Awaited<ReturnType<TenantsRepository['findProfileById']>>
     >,
   ): TenantProfile {
-    const branding = (tenant.branding ?? {}) as Record<string, string>;
+    const branding = (tenant.branding ?? {}) as Record<string, unknown>;
     return {
       id: tenant.id,
       slug: tenant.slug,
       name: tenant.name,
       status: tenant.status,
       branding: {
-        logoUrl: branding.logoUrl ?? null,
-        primaryColor: branding.primaryColor ?? null,
-        theme: branding.theme ?? null,
-        description: branding.description ?? null,
-        address: branding.address ?? null,
-        phone: branding.phone ?? null,
-        email: branding.email ?? null,
+        logoUrl: (branding.logoUrl as string) ?? null,
+        primaryColor: (branding.primaryColor as string) ?? null,
+        theme: (branding.theme as string) ?? null,
+        description: (branding.description as string) ?? null,
+        address: (branding.address as string) ?? null,
+        phone: (branding.phone as string) ?? null,
+        email: (branding.email as string) ?? null,
+        heroImages: Array.isArray(branding.heroImages)
+          ? (branding.heroImages as string[])
+          : [],
       },
       plan: tenant.subscription?.plan
         ? {

@@ -8,6 +8,8 @@ export interface TenantBranding {
   address: string | null;
   phone: string | null;
   email: string | null;
+  /** Storefront hero slideshow image URLs, in display order. */
+  heroImages: string[];
 }
 
 /** Full tenant profile for the tenant console (GET /tenant). */
@@ -31,6 +33,8 @@ export interface PublicBranding {
   address: string | null;
   phone: string | null;
   email: string | null;
+  /** Storefront hero slideshow image URLs, in display order. */
+  heroImages: string[];
 }
 
 /** Row in the platform tenant list (GET /platform/tenants). */

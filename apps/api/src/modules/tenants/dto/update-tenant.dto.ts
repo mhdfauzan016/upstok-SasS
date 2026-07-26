@@ -1,5 +1,7 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  IsArray,
   IsEmail,
   IsHexColor,
   IsOptional,
@@ -41,6 +43,12 @@ class TenantBrandingDto {
   @IsOptional()
   @IsEmail()
   email?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(10)
+  @IsUrl({ require_protocol: true }, { each: true })
+  heroImages?: string[];
 }
 
 /** PATCH /tenant — update the current tenant's profile/branding. */

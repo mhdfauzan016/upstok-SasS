@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -39,6 +40,10 @@ function Index() {
   // Sum of on-hand stock across all active products in the catalog.
   const totalStock = products.reduce((s, p) => s + p.stock, 0);
   const nf = (n: number) => n.toLocaleString("id-ID");
+
+  // Admin-managed hero slideshow images; fall back to the bundled default when
+  // the tenant hasn't uploaded any.
+  const heroImages = branding?.heroImages?.length ? branding.heroImages : [heroImg];
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -97,13 +102,7 @@ function Index() {
             </div>
           </div>
           <div className="relative">
-            <img
-              src={heroImg}
-              alt={`Stok sandal grosir ${storeName}`}
-              width={1280}
-              height={960}
-              className="aspect-[5/4] w-full rounded-2xl object-cover shadow-2xl shadow-primary/10"
-            />
+            <HeroSlideshow images={heroImages} alt={`Stok sandal grosir ${storeName}`} />
             {totalStock > 0 && (
               <div className="absolute -bottom-5 -left-5 hidden rounded-xl border border-border bg-card p-4 shadow-lg md:block">
                 <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Ready Stock</div>
@@ -277,6 +276,63 @@ function Index() {
       </section>
 
       <SiteFooter />
+    </div>
+  );
+}
+
+/**
+ * Auto-advancing hero image slideshow. Cross-fades between the tenant's
+ * uploaded hero images every 5s, with clickable dots. A single image renders
+ * statically (no timer, no dots).
+ */
+function HeroSlideshow({ images, alt }: { images: string[]; alt: string }) {
+  const [active, setActive] = useState(0);
+
+  // Reset if the image set shrinks (e.g. after a branding refetch).
+  useEffect(() => {
+    setActive((i) => (i >= images.length ? 0 : i));
+  }, [images.length]);
+
+  useEffect(() => {
+    if (images.length < 2) return;
+    const id = setInterval(
+      () => setActive((i) => (i + 1) % images.length),
+      5000,
+    );
+    return () => clearInterval(id);
+  }, [images.length]);
+
+  return (
+    <div className="relative aspect-[5/4] w-full overflow-hidden rounded-2xl shadow-2xl shadow-primary/10">
+      {images.map((src, i) => (
+        <img
+          key={src}
+          src={src}
+          alt={images.length > 1 ? `${alt} (${i + 1}/${images.length})` : alt}
+          width={1280}
+          height={960}
+          loading={i === 0 ? "eager" : "lazy"}
+          className={`absolute inset-0 size-full object-cover transition-opacity duration-700 ${
+            i === active ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      ))}
+      {images.length > 1 && (
+        <div className="absolute inset-x-0 bottom-3 flex justify-center gap-2">
+          {images.map((src, i) => (
+            <button
+              key={src}
+              type="button"
+              onClick={() => setActive(i)}
+              aria-label={`Tampilkan gambar ${i + 1}`}
+              aria-current={i === active}
+              className={`h-2 rounded-full transition-all ${
+                i === active ? "w-6 bg-white" : "w-2 bg-white/60 hover:bg-white/90"
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

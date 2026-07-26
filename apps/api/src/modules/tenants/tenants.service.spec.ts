@@ -222,6 +222,7 @@ describe('TenantsService', () => {
         address: null,
         phone: null,
         email: null,
+        heroImages: [],
       });
     });
 

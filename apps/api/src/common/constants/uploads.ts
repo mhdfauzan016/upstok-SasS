@@ -15,6 +15,9 @@ export const UPLOADS_ROUTE = 'uploads';
 /** Sub-path for product images within the uploads dir. */
 export const PRODUCT_IMAGES_SUBDIR = 'products';
 
+/** Sub-path for tenant hero/slideshow images within the uploads dir. */
+export const HERO_IMAGES_SUBDIR = 'hero';
+
 /** Max accepted image size in bytes (5 MB). */
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
